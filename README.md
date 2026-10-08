@@ -73,6 +73,21 @@ cp .env.example .env     # then paste your Supabase keys
 appends that itself, and leaving it in produces `.../rest/v1/rest/v1/...`.
 The code normalises it either way, but a clean value avoids surprises.
 
+Then, for a **new** project, run the whole setup in one command:
+
+```bash
+npm run db:setup
+```
+
+That runs the steps below in the only order that works, and stops at the first
+failure with an explanation. The ordering is not cosmetic: `profiles` has a
+foreign key to `auth.users`, so the demo accounts must exist **before** the
+seed runs. Doing it the other way round gives you a bare
+`violates foreign key constraint "profiles_id_fkey"` with nothing pointing at
+the cause. The seed now preflights this and names the missing accounts.
+
+### The individual steps
+
 **1. Validate the SQL.** Runs the real PostgreSQL parser (libpg_query via
 `@supabase/pg-parser`) plus structural checks — no database needed:
 
@@ -124,14 +139,28 @@ npm run db:users
 
 All demo accounts use the password **`demo1234`**.
 
-This must run before the seed: the `handle_new_user` trigger creates a
-`profiles` row for each signup, and the seed upserts on top of those rows.
+This must run **before** the seed (step 2), not after: the `handle_new_user`
+trigger creates a `profiles` row for each signup, and the seed upserts on top of
+those rows. `db:setup` sequences it correctly.
 
 **4. Run the app:**
 
 ```bash
 npm run dev
 ```
+
+---
+
+## Deploying
+
+Production deploys to Vercel. See **[DEPLOY.md](DEPLOY.md)** — it covers the
+environment variables, the Supabase redirect-URL allow-list (the step that
+breaks sign-in when missed), and a post-deploy checklist.
+
+The short version: import the repo on Vercel, set the four variables in the
+table, add your Vercel domain to Supabase's Site URL and Redirect URLs, then
+deploy. `npm run prebuild` fails the build with an explicit list if any
+required variable is missing, so a misconfigured deploy never silently ships.
 
 ---
 
@@ -368,6 +397,7 @@ npm run dev         # dev server
 npm run build       # production build
 npm run typecheck   # tsc --noEmit
 npm run test        # finance test suite
+npm run db:setup     # FIRST-TIME SETUP: auth users -> schema+seed -> verify (needs DATABASE_URL)
 npm run db:check     # validate SQL (real parser, no DB needed)
 npm run db:migrate   # apply SQL to the real database (needs DATABASE_URL)
 npm run db:verify    # assert seed data integrity (needs DATABASE_URL)
@@ -379,6 +409,11 @@ npm run db:diagnose  # test sign-in, list auth users and profiles
 npm run db:types     # regenerate types from a live database
 npm run smoke        # render every route with a real session (needs dev server)
 ```
+
+`npm run build` runs `prebuild` first, which fails with an explicit list of any
+missing Supabase environment variables. This is deliberate: `NEXT_PUBLIC_*`
+values are inlined into the bundle at build time, so without the guard a
+missing variable ships a broken deployment instead of a failed build.
 
 ---
 

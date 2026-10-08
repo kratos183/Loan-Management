@@ -78,10 +78,20 @@ The body explains **why**, not what. The diff already shows what.
 npm run typecheck   # must be clean
 npm test            # 60 assertions
 npm run db:check    # SQL parses + structural checks
-npm run smoke       # needs `npm run dev` running in another terminal
+npm run build       # includes the prebuild env-var guard
 ```
 
 All four locally first. CI takes 3–5 minutes; your own loop is faster.
+
+Then `npm run smoke` (needs `npm run dev` in another terminal) if your change
+touches a page — it renders all 29 authenticated routes with a real session,
+which is the only way to catch a component that throws only when data is
+present.
+
+Touching SQL? `npm run db:setup` re-applies schema and seed against your own
+project and re-runs the verification, in the only order that works. Never paste
+a migration into the SQL Editor without running `db:check` first — see
+[SQL migrations](#sql-migrations).
 
 ### The PR should explain
 
