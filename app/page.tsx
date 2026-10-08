@@ -149,7 +149,7 @@ export default function LandingPage() {
                 </LinkButton>
               </div>
 
-              <dl className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-ink-200 pt-8">
+              <dl className="mt-12 grid max-w-lg grid-cols-3 gap-4 border-t border-ink-200 pt-8 sm:gap-6">
                 {[
                   { label: "Disbursal", value: "48 hrs" },
                   { label: "Products", value: "9" },

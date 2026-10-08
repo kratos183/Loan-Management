@@ -71,7 +71,8 @@ export default async function UserChatThreadPage({
         </span>
       }
     >
-      <Card className="h-[calc(100vh-16rem)] min-h-[480px] overflow-hidden">
+      {/* `dvh` not `vh` — see the note in the employee chat page. */}
+      <Card className="h-[calc(100dvh-13rem)] min-h-[360px] lg:h-[calc(100dvh-16rem)] lg:min-h-[480px] overflow-hidden">
         <ChatPanel
           conversationId={conversation.id}
           initialMessages={conversation.messages ?? []}

@@ -26,7 +26,17 @@ export function PageHeader({
           <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-500">{description}</p>
         )}
       </div>
-      {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+      {/*
+        Was `flex shrink-0 items-center gap-2`. `shrink-0` stops the action row
+        from ever shrinking, so on a narrow phone a title plus two buttons
+        pushed the row past the viewport instead of wrapping. Full-width and
+        wrapping on mobile; back to an inline, non-shrinking row from `sm` up.
+      */}
+      {actions && (
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:shrink-0 sm:flex-nowrap">
+          {actions}
+        </div>
+      )}
     </div>
   );
 }

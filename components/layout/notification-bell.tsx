@@ -131,7 +131,7 @@ export function NotificationBell({
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div
             data-notif-panel
-            className="absolute right-0 z-50 mt-2 w-96 overflow-hidden rounded-xl border border-ink-200 bg-white shadow-xl"
+            className="absolute right-0 z-50 mt-2 w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-ink-200 bg-white shadow-xl"
           >
             <div className="flex items-center justify-between border-b border-ink-200 px-4 py-3">
               <h3 className="text-sm font-semibold text-ink-900">Notifications</h3>
@@ -147,7 +147,7 @@ export function NotificationBell({
               )}
             </div>
 
-            <div className="max-h-96 overflow-y-auto">
+            <div className="max-h-[min(24rem,60dvh)] overflow-y-auto">
               {items.length === 0 ? (
                 <EmptyState
                   icon={<Bell className="size-6" />}

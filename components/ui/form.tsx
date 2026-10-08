@@ -48,9 +48,27 @@ export function Field({
 
 /* ─── Shared control styles ───────────────────────────────────────────────── */
 
+/**
+ * Shared control styles.
+ *
+ * `text-base` (16px) on mobile is deliberate, not cosmetic: iOS Safari zooms any
+ * focused field whose computed font-size is under 16px, and the user then has to
+ * zoom back out to continue. `text-sm` below `sm` caused that on every input in
+ * the app.
+ *
+ * No height belongs in this shared string. A touch-sized minimum height with a
+ * `sm` reset would also land on the Textarea, and since Tailwind emits responsive
+ * variants after base utilities, that reset would win over the textarea's own
+ * floor at >=640px — collapsing it to two rows on desktop. So height is set per
+ * control: Input and Select use `h-11 sm:h-10`, Textarea keeps `min-h-24`.
+ *
+ * Utility names are spelled out in this comment rather than pasted as literals,
+ * because Tailwind's scanner reads raw text and will happily generate a real
+ * rule for a class named only inside prose.
+ */
 const control =
-  "w-full rounded-lg border border-ink-300 bg-white text-sm text-ink-900 " +
-  "placeholder:text-ink-400 transition-colors " +
+  "w-full rounded-lg border border-ink-300 bg-white text-base text-ink-900 " +
+  "placeholder:text-ink-400 transition-colors sm:text-sm " +
   "hover:border-ink-400 focus:border-brand-500 focus:outline-none " +
   "focus:ring-2 focus:ring-brand-500/25 disabled:cursor-not-allowed " +
   "disabled:bg-ink-100 disabled:text-ink-500 aria-invalid:border-danger-400";
@@ -68,7 +86,7 @@ export function Input({ className, prefix, suffix, error, ...props }: InputProps
     <input
       className={cn(
         control,
-        "h-10 px-3",
+        "h-11 px-3 sm:h-10",
         prefix && "pl-8",
         suffix && "pr-14",
         error && "border-danger-400 focus:border-danger-500 focus:ring-danger-500/25",
@@ -110,7 +128,7 @@ export function Select({ className, error, options, children, ...props }: Select
     <select
       className={cn(
         control,
-        "h-10 cursor-pointer appearance-none bg-[length:16px] bg-[right_0.75rem_center] bg-no-repeat pr-9 pl-3",
+        "h-11 cursor-pointer appearance-none bg-[length:16px] bg-[right_0.75rem_center] bg-no-repeat pr-9 pl-3 sm:h-10",
         "bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22><path d=%22M6 9l6 6 6-6%22/></svg>')]",
         error && "border-danger-400",
         className,
@@ -278,12 +296,20 @@ export function Slider({
       disabled={disabled}
       onChange={(e) => onChange(Number(e.target.value))}
       className={cn(
+        // The track stays 8px, but the thumb grows to 28px on touch — an 8px
+        // track with a 16px thumb is effectively unusable with a fingertip.
+        // Both -webkit- and -moz- are set so the thumb is the same size in
+        // every engine rather than falling back to accent styling in Firefox.
         "h-2 w-full cursor-pointer appearance-none rounded-full bg-ink-200 accent-brand-600",
         "disabled:cursor-not-allowed disabled:opacity-50",
-        "[&::-webkit-slider-thumb]:size-4 [&::-webkit-slider-thumb]:appearance-none",
+        "[&::-webkit-slider-thumb]:size-7 [&::-webkit-slider-thumb]:appearance-none sm:[&::-webkit-slider-thumb]:size-4",
         "[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white",
         "[&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:border-2",
         "[&::-webkit-slider-thumb]:border-brand-600",
+        "[&::-moz-range-thumb]:size-7 [&::-moz-range-thumb]:appearance-none sm:[&::-moz-range-thumb]:size-4",
+        "[&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white",
+        "[&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:border-2",
+        "[&::-moz-range-thumb]:border-brand-600",
         className,
       )}
     />
@@ -324,6 +350,10 @@ export function Switch({
         onClick={() => onChange(!checked)}
         className={cn(
           "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors",
+          // The pill stays 24px tall, but the hit area grows to 44px via a
+          // transparent pseudo-element. Scaling the pill instead would misalign
+          // the 20px thumb against the track.
+          "after:absolute after:-inset-y-2.5 after:-inset-x-1 after:content-['']",
           "disabled:cursor-not-allowed disabled:opacity-50",
           checked ? "bg-brand-600" : "bg-ink-300",
         )}

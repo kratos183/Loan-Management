@@ -93,7 +93,13 @@ export default async function StaffChatThreadPage({
       }
     >
       <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
-        <Card className="h-[calc(100vh-15rem)] min-h-[480px] overflow-hidden">
+        {/*
+          `dvh`, not `vh`. On mobile, `100vh` resolves to the viewport with the
+          URL bar hidden, so a panel sized against it overflows by the height of
+          the browser chrome and pushes the composer off-screen. The offsets
+          differ per breakpoint because the header stack is taller on a phone.
+        */}
+        <Card className="h-[calc(100dvh-13rem)] min-h-[360px] lg:h-[calc(100dvh-15rem)] lg:min-h-[480px] overflow-hidden">
           <ChatPanel
             conversationId={conversation.id}
             initialMessages={conversation.messages ?? []}

@@ -112,7 +112,12 @@ export default async function AdminProductsPage() {
                       </div>
 
                       {/* Pricing */}
-                      <div className="grid grid-cols-3 gap-3 rounded-lg bg-ink-50 p-3.5">
+                      {/*
+                        Stacks on mobile. The values are ranges
+                        ("₹50K–₹5Cr"), which wrap mid-token when squeezed
+                        into three columns on a phone.
+                      */}
+                      <div className="grid grid-cols-1 gap-2.5 rounded-lg bg-ink-50 p-3.5 sm:grid-cols-3 sm:gap-3">
                         <Cell
                           label="Amount"
                           value={`${moneyCompact(product.min_amount)}–${moneyCompact(product.max_amount)}`}

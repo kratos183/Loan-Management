@@ -28,10 +28,16 @@ const VARIANTS: Record<Variant, string> = {
     "text-brand-600 underline-offset-4 hover:underline hover:text-brand-700 p-0 h-auto",
 };
 
+/**
+ * Heights are mobile-first: comfortable on touch (44px for `md`, which is the
+ * WCAG 2.2 minimum target size), then tightened from `sm` up where a precise
+ * pointer makes the extra pixels just visual bulk. The old 28/32px `xs`/`sm`
+ * were not usable by touch at all.
+ */
 const SIZES: Record<Size, string> = {
-  xs: "h-7 px-2.5 text-xs gap-1.5 rounded-md",
-  sm: "h-8 px-3 text-[13px] gap-1.5 rounded-lg",
-  md: "h-10 px-4 text-sm gap-2 rounded-lg",
+  xs: "h-8 px-2.5 text-xs gap-1.5 rounded-md sm:h-7",
+  sm: "h-10 px-3 text-[13px] gap-1.5 rounded-lg sm:h-8",
+  md: "h-11 px-4 text-sm gap-2 rounded-lg sm:h-10",
   lg: "h-12 px-6 text-[15px] gap-2.5 rounded-xl",
 };
 
@@ -112,7 +118,9 @@ export function IconButton({
       title={label}
       className={cn(
         base,
-        "size-9 rounded-lg text-ink-600 hover:bg-ink-100 hover:text-ink-900",
+        // 40px on touch, 36px with a mouse. `size-*` sets both axes, so this
+        // cannot drift from the visual box the way independent h-/w- classes can.
+        "size-10 rounded-lg text-ink-600 hover:bg-ink-100 hover:text-ink-900 sm:size-9",
         className,
       )}
       {...props}

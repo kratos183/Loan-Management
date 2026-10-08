@@ -102,7 +102,11 @@ export function DecisionPanel({
       />
       <CardBody>
         {/* Mode switch */}
-        <div className="mb-4 grid grid-cols-3 gap-1.5 rounded-lg bg-ink-100 p-1">
+        <div
+          className="mb-4 grid grid-cols-3 gap-1.5 rounded-lg bg-ink-100 p-1"
+          role="tablist"
+          aria-label="Decision"
+        >
           {(
             [
               { key: "APPROVE" as Mode, label: "Approve" },
@@ -112,8 +116,11 @@ export function DecisionPanel({
           ).map((t) => (
             <button
               key={t.key}
+              type="button"
+              role="tab"
+              aria-selected={mode === t.key}
               onClick={() => setMode(t.key)}
-              className={`rounded-md px-2 py-2 text-[13px] font-medium transition-all ${
+              className={`rounded-md px-1 py-2 text-[12px] font-medium transition-all sm:px-2 sm:text-[13px] ${
                 mode === t.key
                   ? "bg-white text-ink-900 shadow-xs"
                   : "text-ink-500 hover:text-ink-800"
