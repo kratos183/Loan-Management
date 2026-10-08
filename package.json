@@ -1,7 +1,4 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
-  "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,6 +7,7 @@
     "typecheck": "tsc --noEmit",
     "test": "tsx tests/finance.test.ts",
     "db:check": "tsx scripts/check-sql.ts && node scripts/parse-sql.mjs supabase/migrations/0001_core_schema.sql supabase/migrations/0002_seed.sql",
+    "db:setup": "node scripts/setup-project.mjs",
     "db:migrate": "node scripts/migrate.mjs",
     "db:verify": "node scripts/verify-seed.mjs",
     "db:users": "tsx scripts/create-demo-users.ts",
@@ -49,5 +47,6 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"
-  }
+  },
+  "name": "my-app"
 }

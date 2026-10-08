@@ -141,13 +141,25 @@ function findUnsafeApostrophes(sql: string): number[] {
     }
 
     if (c === "'") {
-      // Legal openers are preceded by punctuation, whitespace or a newline.
-      const prev = sql[i - 1];
-      const safePrev =
-        prev === undefined ||
-        /[\s,(\[=:+*/<>|-]/.test(prev);
+      // Legal openers are preceded by punctuation, whitespace, a type
+      // prefix (E'..', B'..', X'..', N'..', U&'..') or a dollar tag.
+      let j = i - 1;
+      while (j >= 0 && /[A-Za-z0-9_]/.test(sql[j])) j--; // skip a word
+      const word = sql.slice(j + 1, i);
 
-      if (!safePrev) bad.push(i);
+      const isTypePrefix = /^(E|B|X|N|U&)$/i.test(word);
+      const bareWordIsIdentifier = /^[A-Za-z_][A-Za-z0-9_]*$/.test(word) && !isTypePrefix;
+
+      // A letter immediately before the quote with no prefix (e.g. `borrower's`)
+      // means the string closed early.
+      const prev = sql[i - 1];
+      const unsafe =
+        !isTypePrefix &&
+        prev !== undefined &&
+        /[A-Za-z0-9_]/.test(prev) &&
+        bareWordIsIdentifier;
+
+      if (unsafe) bad.push(i);
       quote = c;
       continue;
     }

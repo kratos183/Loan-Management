@@ -60,9 +60,22 @@ if (listError) {
 const users = listed.users ?? [];
 console.log(`    ${users.length} user(s) found`);
 
+// Node keeps the Supabase client's sockets alive; exiting with them open
+// trips an assertion on Windows. Sign out and close before bailing.
+async function bail(message, code = 1) {
+  await anonClient.auth.signOut().catch(() => {});
+  console.log(message);
+  process.exit(code);
+}
+
 if (users.length === 0) {
-  console.log("\n    No auth users exist. Run:  npm run db:users\n");
-  process.exit(1);
+  await bail(
+    "\n    No auth users exist on this project.\n" +
+      "    The seed inserts `profiles` rows keyed to `auth.users`, so it cannot run yet.\n\n" +
+      "    Fix:\n" +
+      "      npm run db:users     # creates the 10 demo accounts\n" +
+      "      npm run db:migrate   # then apply the schema and seed\n\n",
+  );
 }
 
 for (const u of users.slice(0, 12)) {
@@ -120,4 +133,5 @@ for (const email of targets) {
   }
 }
 
+await anonClient.auth.signOut().catch(() => {});
 console.log("");

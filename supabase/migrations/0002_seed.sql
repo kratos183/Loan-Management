@@ -31,13 +31,65 @@ begin
 end $$;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- Run AFTER the auth users exist:  npm run db:users
+-- ORDERING
+--
+--   1. npm run db:migrate   ← runs this file
+--   ...
 --
 -- Every insert below is guarded by `where exists (...)` or `on conflict do
--- nothing`, so re-running this is safe and will not error or duplicate.
+-- update`, so re-running this is safe and will not error or duplicate.
+--
+-- NOTE: never write the dollar-quote sequence literally inside this file's
+-- body, not even in a comment. Inside a dollar-quoted string there is no
+-- comment parsing — the parser stops at the first closing tag it finds.
 -- ═══════════════════════════════════════════════════════════════════════════
 
--- ─── Stable IDs so the seed is idempotent and easy to reason about ─────────
+-- ─── Preflight ───────────────────────────────────────────────────────────────
+-- The `profiles` table keys to `auth.users(id)`, so the demo auth accounts
+-- must exist before any of this runs. Without this check Postgres reports a
+-- bare foreign-key violation (`profiles_id_fkey`) with no hint about the
+-- cause, which is the single most confusing failure this seed produces.
+do $preflight$
+declare
+  v_missing text;
+begin
+  with demo(id, email) as (
+    values
+      ('11111111-1111-4111-8111-111111111111'::uuid, 'admin@demo.in'),
+      ('22222222-2222-4222-8222-222222222222'::uuid, 'manager@demo.in'),
+      ('33333333-3333-4333-8333-333333333333'::uuid, 'officer@demo.in'),
+      ('44444444-4444-4444-8444-444444444444'::uuid, 'officer2@demo.in'),
+      ('55555555-5555-4555-8555-555555555555'::uuid, 'rahul@demo.in'),
+      ('66666666-6666-4666-8666-666666666666'::uuid, 'priya@demo.in'),
+      ('77777777-7777-4777-8777-777777777777'::uuid, 'arjun@demo.in'),
+      ('88888888-8888-4888-8888-888888888888'::uuid, 'meera@demo.in'),
+      ('99999999-9999-4999-8999-999999999999'::uuid, 'sanjay@demo.in'),
+      ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'::uuid, 'kavya@demo.in')
+  )
+  select string_agg(d.email, ', ' order by d.email)
+  into v_missing
+  from demo d
+  left join auth.users u on u.id = d.id
+  where u.id is null;
+
+  if v_missing is not null then
+    raise exception using
+      message = 'Seed aborted: demo auth accounts are missing from auth.users.',
+      detail = format(
+        E'Missing: %s\n\n'
+        'The `profiles` table has a foreign key to `auth.users`, so this seed '
+        'cannot insert borrowers, officers or admin accounts until those auth '
+        'users exist.\n\n'
+        'Fix, from the project root:\n'
+        '    npm run db:users\n\n'
+        'Then re-run this migration. `npm run db:setup` does both in order.',
+        v_missing),
+      hint = 'Run `npm run db:users` before applying the seed.',
+      errcode = 'check_violation';
+  end if;
+end
+$preflight$;
+
 -- ─── Stable IDs ──────────────────────────────────────────────────────────────
 -- Declared as literals rather than variables. Each INSERT below is an
 -- independent top-level statement, so a truncated paste costs one statement
