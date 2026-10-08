@@ -9,6 +9,58 @@ Supabase (Postgres + Auth + Realtime + Storage)
 
 ---
 
+## Team workflow
+
+This is the `main` repository — treat `main` as protected and land changes
+only through pull requests. Full detail in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+```bash
+git checkout main && git pull
+git checkout -b feat/short-description
+# ... work, running the checks below locally ...
+git commit -m "feat(scope): what changed"
+git push -u origin feat/short-description
+# open a PR against main
+```
+
+| Rule | Why |
+|---|---|
+| Never push directly to `main` | CI runs on every PR; direct pushes skip it |
+| Two approvals, one from a non-author | Money maths and RLS need a second pair of eyes |
+| `npm run smoke` before opening a PR | `next build` cannot catch session-scoped render errors |
+| Add a migration rather than editing a shipped one | `0001` is idempotent, so re-running it is safe; already-applied migrations are not replayed by others' databases |
+
+### Automated checks
+
+| Command | Needs a database | Runs on every PR |
+|---|---|---|
+| `npm run typecheck` | no | ✅ |
+| `npm test` | no | ✅ |
+| `npm run db:check` | no | ✅ |
+| `npm run build` | no | ✅ |
+| `npm run db:migrate` | yes | 🔒 after merge / manual |
+| `npm run db:verify` | yes | 🔒 |
+| `npm run db:embeds` | yes | 🔒 |
+| `npm run smoke` | yes | 🔒 |
+
+CI (`.github/workflows/ci.yml`) runs the four offline checks per PR.
+`.github/workflows/ci-live.yml` runs the database-backed ones after merge to
+`main`, and on demand from the Actions tab. The live workflow reads these
+repository secrets:
+
+```
+DATABASE_URL               pooled connection string, port 6543
+NEXT_PUBLIC_SUPABASE_URL   https://<ref>.supabase.co   (no /rest/v1)
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY
+```
+
+Add them under **Settings → Secrets and variables → Actions**. Point
+`DATABASE_URL` at a **dedicated CI project**, not production — the seed
+truncates application tables.
+
+---
+
 ## Quick start
 
 ```bash
@@ -316,10 +368,16 @@ npm run dev         # dev server
 npm run build       # production build
 npm run typecheck   # tsc --noEmit
 npm run test        # finance test suite
-npm run db:check    # validate SQL (real parser, no DB needed)
-npm run db:migrate  # apply SQL to the real database (needs DATABASE_URL)
-npm run db:users    # create demo auth users
-npm run db:types    # regenerate types from a live database
+npm run db:check     # validate SQL (real parser, no DB needed)
+npm run db:migrate   # apply SQL to the real database (needs DATABASE_URL)
+npm run db:verify    # assert seed data integrity (needs DATABASE_URL)
+npm run db:embeds    # validate every PostgREST embed (needs a database)
+npm run db:relations # list FKs, check every embed hint resolves
+npm run db:users     # create demo auth users
+npm run db:users:reset  # reset all demo passwords
+npm run db:diagnose  # test sign-in, list auth users and profiles
+npm run db:types     # regenerate types from a live database
+npm run smoke        # render every route with a real session (needs dev server)
 ```
 
 ---
