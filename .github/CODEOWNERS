@@ -1,21 +1,25 @@
 # Reviewers for sensitive areas.
 #
-# Repo owners do not get a GitHub notification from CODEOWNERS alone — these
-# are a routing aid. For real enforcement use branch protection
-# (Settings → Branches → Branch protection rules) to make certain paths
-# require a specific reviewer.
+# Replace @kratos183 with the usernames of whoever should actually own each
+# area — a single owner on every line defeats the purpose of routing.
+#
+# CODEOWNERS is a routing aid, not enforcement: owners are not notified
+# automatically, and it does not block a merge on its own. To make a path
+# genuinely require a reviewer, use a ruleset
+# (Settings → Rulesets → New branch ruleset → Rules → Require review from
+# Code Owners) alongside this file.
 
-*                       @chandstack
+*                       @kratos183
 
 # Financial logic — wrong numbers here are the expensive kind of wrong.
-/lib/finance/           @chandstack
-/tests/                 @chandstack
+/lib/finance/           @kratos183
+/tests/                 @kratos183
 
 # Database, RLS and migrations.
-/supabase/              @chandstack
-/lib/supabase/          @chandstack
+/supabase/              @kratos183
+/lib/supabase/          @kratos183
 
 # Authentication and authorisation.
-/proxy.ts               @chandstack
-/lib/auth.ts            @chandstack
-/lib/actions/auth.ts    @chandstack
+/proxy.ts               @kratos183
+/lib/auth.ts            @kratos183
+/lib/actions/auth.ts    @kratos183
