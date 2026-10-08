@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, Check, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -32,7 +32,40 @@ export function NotificationBell({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const rootRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
   const unread = items.filter((n) => !n.read_at).length;
+
+  // ── Dismiss ────────────────────────────────────────────────────────────────
+  // This used to be a `fixed inset-0 z-40` click-catcher. That does not work
+  // here: the bell lives inside the sticky header, which carries
+  // `backdrop-blur-md`, and a computed `backdrop-filter` other than `none`
+  // creates a containing block for fixed descendants (CSS Filter Effects). The
+  // overlay therefore covered only the 64px header strip, so tapping the page
+  // behind did nothing and the panel could not be dismissed.
+  //
+  // A document-level listener has no positioning dependency at all, and handles
+  // both the trigger and the panel as "inside".
+  useEffect(() => {
+    if (!open) return;
+
+    const onPointerDown = (e: PointerEvent) => {
+      const t = e.target as Node;
+      if (rootRef.current?.contains(t) || panelRef.current?.contains(t)) return;
+      setOpen(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   // ── Live updates ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -109,12 +142,13 @@ export function NotificationBell({
   }
 
   return (
-    <div className="relative">
+    <div className="relative" ref={rootRef}>
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={`Notifications${unread ? `, ${unread} unread` : ""}`}
+        aria-expanded={open}
         className={cn(
-          "relative flex size-9 items-center justify-center rounded-lg transition-colors",
+          "relative flex size-10 items-center justify-center rounded-lg transition-colors sm:size-9",
           open ? "bg-ink-100 text-ink-900" : "text-ink-500 hover:bg-ink-100 hover:text-ink-900",
         )}
       >
@@ -127,12 +161,11 @@ export function NotificationBell({
       </button>
 
       {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div
-            data-notif-panel
-            className="absolute right-0 z-50 mt-2 w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-ink-200 bg-white shadow-xl"
-          >
+        <div
+          ref={panelRef}
+          data-notif-panel
+          className="absolute right-0 z-50 mt-2 w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-ink-200 bg-white shadow-xl"
+        >
             <div className="flex items-center justify-between border-b border-ink-200 px-4 py-3">
               <h3 className="text-sm font-semibold text-ink-900">Notifications</h3>
               {unread > 0 && (
@@ -203,7 +236,6 @@ export function NotificationBell({
               </button>
             </div>
           </div>
-        </>
       )}
     </div>
   );

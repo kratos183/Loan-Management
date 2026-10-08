@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOut, Landmark, X, Menu } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
 import { Avatar } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
@@ -144,17 +145,35 @@ export function Sidebar({
 /**
  * Slide-over drawer for small screens.
  *
- * Three things a plain `fixed inset-0` overlay gets wrong on a phone, all fixed
- * here:
- *   - the page behind keeps scrolling under the drawer
- *   - there is no way to dismiss it with a keyboard
- *   - it is announced as nothing at all, so a screen reader walks past it into
- *     the obscured page
+ * The overlay is rendered into `document.body` via a portal, and that is not
+ * cosmetic. It used to be rendered inline, where the sticky `<header>` that
+ * hosts it carries `backdrop-blur-md`. A computed `backdrop-filter` other than
+ * `none` creates a *containing block for fixed and absolutely positioned
+ * descendants* (CSS Filter Effects), so the drawer's `position: fixed;
+ * inset: 0` resolved against the 64px-tall header instead of the viewport. The
+ * overlay covered only the header strip, the panel was 64px tall, the sidebar's
+ * brand row (`h-16 shrink-0`) consumed all of it and the nav was crushed to
+ * nothing — leaving the page showing through.
+ *
+ * Portalling to `<body>` keeps the drawer out of any ancestor that might grow a
+ * `transform`, `filter`, `backdrop-filter`, `will-change` or `contain`, which is
+ * the entire family of properties that silently re-parent a fixed overlay.
+ *
+ * The rest of the behaviour a phone needs:
+ *   - body scroll is locked while open
+ *   - Escape closes, Tab is trapped inside
+ *   - `role="dialog" aria-modal="true"`, so a screen reader does not walk
+ *     straight through into the obscured page
  */
 export function MobileSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+
+  // `document` does not exist during SSR, so the portal only renders on the
+  // client. Without this the trigger would flash in and then pop away.
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!open) return;
@@ -204,6 +223,32 @@ export function MobileSidebar(props: React.ComponentProps<typeof Sidebar>) {
     };
   }, [open]);
 
+  const drawer = (
+    <div className="fixed inset-0 z-50 lg:hidden">
+      <div
+        className="absolute inset-0 bg-ink-950/40 backdrop-blur-sm"
+        onClick={() => setOpen(false)}
+      />
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation"
+        className="absolute inset-y-0 left-0 flex w-[85vw] max-w-72 animate-slide-in shadow-2xl"
+      >
+        <button
+          ref={closeRef}
+          onClick={() => setOpen(false)}
+          aria-label="Close navigation"
+          className="absolute top-3 right-3 z-10 flex size-9 items-center justify-center rounded-lg text-ink-400 hover:bg-ink-100"
+        >
+          <X className="size-4" />
+        </button>
+        <Sidebar {...props} onNavigate={() => setOpen(false)} className="w-full" />
+      </div>
+    </div>
+  );
+
   return (
     <>
       <Button
@@ -218,37 +263,9 @@ export function MobileSidebar(props: React.ComponentProps<typeof Sidebar>) {
         Menu
       </Button>
 
-      {open && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div
-            className="absolute inset-0 bg-ink-950/40 backdrop-blur-sm"
-            onClick={() => setOpen(false)}
-          />
-          <div
-            ref={panelRef}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Navigation"
-            // 85vw keeps the drawer clear of the screen edge on a 320px phone
-            // while still capping at the 288px the layout is designed around.
-            className="absolute inset-y-0 left-0 flex w-[85vw] max-w-72 animate-slide-in shadow-2xl"
-          >
-            <button
-              ref={closeRef}
-              onClick={() => setOpen(false)}
-              aria-label="Close navigation"
-              className="absolute top-3 right-3 z-10 flex size-9 items-center justify-center rounded-lg text-ink-400 hover:bg-ink-100"
-            >
-              <X className="size-4" />
-            </button>
-            <Sidebar
-              {...props}
-              onNavigate={() => setOpen(false)}
-              className="w-full"
-            />
-          </div>
-        </div>
-      )}
+      {open &&
+        mounted &&
+        createPortal(drawer, document.body)}
     </>
   );
 }
