@@ -110,18 +110,18 @@ export default async function AdminStaffPage() {
             <TableWrap>
               <thead>
                 <tr>
-                  <Th>Name</Th>
-                  <Th>Role</Th>
-                  <Th>Territory</Th>
-                  <Th>Categories</Th>
-                  <Th align="right">Sanctioning limit</Th>
-                  <Th>Status</Th>
+                  <Th priority="primary">Name</Th>
+                  <Th priority="primary">Role</Th>
+                  <Th priority="normal">Territory</Th>
+                  <Th priority="hidden">Categories</Th>
+                  <Th align="right" priority="primary">Sanctioning limit</Th>
+                  <Th priority="primary">Status</Th>
                 </tr>
               </thead>
               <tbody>
                 {staff.map((member) => (
                   <Tr key={member.user_id}>
-                    <Td>
+                    <Td priority="primary">
                       <div className="flex items-center gap-2.5">
                         <Avatar name={member.profile?.full_name} size="sm" />
                         <div className="min-w-0">
@@ -134,13 +134,13 @@ export default async function AdminStaffPage() {
                         </div>
                       </div>
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <Badge tone={member.employee_role === "MANAGER" ? "brand" : "neutral"}>
                         {member.employee_role}
                       </Badge>
                     </Td>
-                    <Td className="text-ink-600">{member.territory ?? "—"}</Td>
-                    <Td>
+                    <Td className="text-ink-600" priority="normal">{member.territory ?? "—"}</Td>
+                    <Td priority="hidden">
                       <div className="flex flex-wrap gap-1">
                         {(member.specialities ?? []).map((s) => (
                           <span
@@ -152,10 +152,10 @@ export default async function AdminStaffPage() {
                         ))}
                       </div>
                     </Td>
-                    <Td align="right" mono className="font-semibold">
+                    <Td align="right" mono className="font-semibold" priority="primary">
                       {money(member.approval_limit)}
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <StatusBadge status={member.profile?.status ?? "ACTIVE"} />
                     </Td>
                   </Tr>

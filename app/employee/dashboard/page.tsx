@@ -136,12 +136,19 @@ export default async function EmployeeDashboardPage() {
             <TableWrap>
               <thead>
                 <tr>
-                  <Th>Applicant</Th>
-                  <Th>Product</Th>
-                  <Th align="right">Amount</Th>
-                  <Th>Status</Th>
-                  <Th align="right">Submitted</Th>
-                  <Th align="right">SLA</Th>
+                  {/*
+                    Priority is per column, and it is what makes this table
+                    readable on a phone. On a 320px screen only Applicant,
+                    Product, Amount and Status survive; Submitted and SLA
+                    return at `sm`. Without it all six sat in a 640px table
+                    and the last two were simply off-screen with no cue.
+                  */}
+                  <Th priority="primary">Applicant</Th>
+                  <Th priority="primary">Product</Th>
+                  <Th align="right" priority="primary">Amount</Th>
+                  <Th priority="primary">Status</Th>
+                  <Th align="right" priority="normal">Submitted</Th>
+                  <Th align="right" priority="normal">SLA</Th>
                 </tr>
               </thead>
               <tbody>
@@ -151,7 +158,7 @@ export default async function EmployeeDashboardPage() {
 
                   return (
                     <Tr key={app.id}>
-                      <Td>
+                      <Td priority="primary">
                         <Link
                           href={`/employee/applications/${app.id}`}
                           className="font-medium text-ink-900 hover:text-brand-700 hover:underline"
@@ -162,22 +169,22 @@ export default async function EmployeeDashboardPage() {
                           {app.reference_no}
                         </span>
                       </Td>
-                      <Td>
+                      <Td priority="primary">
                         <span className="block text-ink-800">{app.product?.name}</span>
                         <span className="text-[11px] text-ink-400">
                           {tenure(app.tenure_months)}
                         </span>
                       </Td>
-                      <Td align="right" mono className="font-semibold">
+                      <Td align="right" mono className="font-semibold" priority="primary">
                         {money(app.requested_amount)}
                       </Td>
-                      <Td>
+                      <Td priority="primary">
                         <StatusBadge status={app.status} />
                       </Td>
-                      <Td align="right" className="text-xs text-ink-400">
+                      <Td align="right" className="text-xs text-ink-400" priority="normal">
                         {relativeTime(app.submitted_at)}
                       </Td>
-                      <Td align="right">
+                      <Td align="right" priority="normal">
                         {overdueSla ? (
                           <Badge tone="danger">Breached</Badge>
                         ) : app.sla_due_at ? (
@@ -328,13 +335,16 @@ export default async function EmployeeDashboardPage() {
             <TableWrap>
               <thead>
                 <tr>
-                  <Th>Borrower</Th>
-                  <Th>Loan</Th>
-                  <Th align="right">Instalment</Th>
-                  <Th align="right">Due date</Th>
-                  <Th align="right">Days past due</Th>
-                  <Th align="right">Amount due</Th>
-                  <Th align="right">Penalty</Th>
+                  {/* Seven columns will not fit a phone. Borrower, Loan,
+                      Amount due and Days past due are what an officer acts
+                      on; the rest is reference detail from `sm` up. */}
+                  <Th priority="primary">Borrower</Th>
+                  <Th priority="primary">Loan</Th>
+                  <Th align="right" priority="hidden">Instalment</Th>
+                  <Th align="right" priority="normal">Due date</Th>
+                  <Th align="right" priority="primary">Days past due</Th>
+                  <Th align="right" priority="primary">Amount due</Th>
+                  <Th align="right" priority="normal">Penalty</Th>
                 </tr>
               </thead>
               <tbody>
@@ -346,7 +356,7 @@ export default async function EmployeeDashboardPage() {
                   } | null;
                   return (
                     <Tr key={e.id}>
-                      <Td>
+                      <Td priority="primary">
                         <span className="font-medium text-ink-900">
                           {loan?.borrower?.full_name}
                         </span>
@@ -354,27 +364,27 @@ export default async function EmployeeDashboardPage() {
                           {loan?.borrower?.phone}
                         </span>
                       </Td>
-                      <Td>
+                      <Td priority="primary">
                         <span className="block text-ink-800">{loan?.product?.name}</span>
                         <span className="tabular-nums font-mono text-[11px] text-ink-400">
                           {loan?.account_number}
                         </span>
                       </Td>
-                      <Td align="right" mono>
+                      <Td align="right" mono priority="hidden">
                         #{e.installment_no}
                       </Td>
-                      <Td align="right" className="whitespace-nowrap">
+                      <Td align="right" className="whitespace-nowrap" priority="normal">
                         {formatDate(e.due_date)}
                       </Td>
-                      <Td align="right">
+                      <Td align="right" priority="primary">
                         <Badge tone={e.days_past_due > 30 ? "danger" : "warning"}>
                           {e.days_past_due}d
                         </Badge>
                       </Td>
-                      <Td align="right" mono className="font-semibold">
+                      <Td align="right" mono className="font-semibold" priority="primary">
                         {money(e.amount_due)}
                       </Td>
-                      <Td align="right" mono className="text-danger-700">
+                      <Td align="right" mono className="text-danger-700" priority="normal">
                         {Number(e.penalty_amount) > 0 ? money(e.penalty_amount) : "—"}
                       </Td>
                     </Tr>

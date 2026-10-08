@@ -70,13 +70,13 @@ export default async function StaffApplicationsPage() {
           <TableWrap>
             <thead>
               <tr>
-                <Th>Applicant</Th>
-                <Th>Product</Th>
-                <Th align="right">Amount</Th>
-                <Th>Status</Th>
-                <Th align="right">Submitted</Th>
-                <Th align="right">SLA due</Th>
-                <Th align="right" />
+                <Th priority="primary">Applicant</Th>
+                <Th priority="primary">Product</Th>
+                <Th align="right" priority="primary">Amount</Th>
+                <Th priority="primary">Status</Th>
+                <Th align="right" priority="normal">Submitted</Th>
+                <Th align="right" priority="normal">SLA due</Th>
+                <Th align="right" priority="primary" />
               </tr>
             </thead>
             <tbody>
@@ -87,7 +87,7 @@ export default async function StaffApplicationsPage() {
 
                 return (
                   <Tr key={app.id}>
-                    <Td>
+                    <Td priority="primary">
                       <div className="flex items-center gap-2.5">
                         <Avatar name={app.applicant?.full_name} size="sm" />
                         <div className="min-w-0">
@@ -103,7 +103,7 @@ export default async function StaffApplicationsPage() {
                         </div>
                       </div>
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <span className="block text-ink-800">{app.product?.name}</span>
                       <span className="block text-[11px] text-ink-400">
                         {tenure(app.tenure_months)}
@@ -111,7 +111,7 @@ export default async function StaffApplicationsPage() {
                           ` · ${app.product?.collateral_type.toLowerCase()}`}
                       </span>
                     </Td>
-                    <Td align="right">
+                    <Td align="right" priority="primary">
                       <span className="tabular-nums block font-semibold">
                         {money(app.requested_amount)}
                       </span>
@@ -121,13 +121,13 @@ export default async function StaffApplicationsPage() {
                         </span>
                       )}
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <StatusBadge status={app.status} />
                     </Td>
-                    <Td align="right" className="text-xs text-ink-400">
+                    <Td align="right" className="text-xs text-ink-400" priority="normal">
                       {relativeTime(app.submitted_at)}
                     </Td>
-                    <Td align="right">
+                    <Td align="right" priority="normal">
                       {overdue ? (
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-danger-700">
                           <AlertTriangle className="size-3" />
@@ -137,7 +137,7 @@ export default async function StaffApplicationsPage() {
                         <span className="text-xs text-ink-500">{formatDate(app.sla_due_at)}</span>
                       )}
                     </Td>
-                    <Td align="right">
+                    <Td align="right" priority="primary">
                       <LinkButton
                         href={`/employee/applications/${app.id}`}
                         size="xs"

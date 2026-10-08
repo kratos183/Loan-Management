@@ -182,14 +182,19 @@ export default async function LoanDetailPage({
               <TableWrap>
                 <thead>
                   <tr>
-                    <Th>#</Th>
-                    <Th>Due date</Th>
-                    <Th align="right">Principal</Th>
-                    <Th align="right">Interest</Th>
-                    <Th align="right">Penalty</Th>
-                    <Th align="right">Total</Th>
-                    <Th>Status</Th>
-                    <Th align="right" />
+                    {/* The schedule is 8 columns wide and will not fit a
+                        phone. Due date, Total, Status and the Pay button are
+                        what a borrower acts on and must stay. Penalty folds
+                        into Total (`amount_due + penalty`) so it can go; the
+                        instalment number is desktop reference only. */}
+                    <Th priority="hidden">#</Th>
+                    <Th priority="primary">Due date</Th>
+                    <Th align="right" priority="normal">Principal</Th>
+                    <Th align="right" priority="hidden">Interest</Th>
+                    <Th align="right" priority="hidden">Penalty</Th>
+                    <Th align="right" priority="primary">Total</Th>
+                    <Th priority="primary">Status</Th>
+                    <Th align="right" priority="primary" />
                   </tr>
                 </thead>
                 <tbody>
@@ -198,23 +203,23 @@ export default async function LoanDetailPage({
                       key={emi.id}
                       className={emi.status === "OVERDUE" ? "bg-danger-50/40" : undefined}
                     >
-                      <Td mono className="text-ink-400">
+                      <Td mono className="text-ink-400" priority="hidden">
                         {emi.installment_no}
                       </Td>
-                      <Td className="whitespace-nowrap">{formatDate(emi.due_date)}</Td>
-                      <Td align="right" mono>
+                      <Td className="whitespace-nowrap" priority="primary">{formatDate(emi.due_date)}</Td>
+                      <Td align="right" mono priority="normal">
                         {money(emi.principal_part)}
                       </Td>
-                      <Td align="right" mono className="text-warning-700">
+                      <Td align="right" mono className="text-warning-700" priority="hidden">
                         {money(emi.interest_part)}
                       </Td>
-                      <Td align="right" mono className="text-danger-700">
+                      <Td align="right" mono className="text-danger-700" priority="hidden">
                         {Number(emi.penalty_amount) > 0 ? money(emi.penalty_amount) : "—"}
                       </Td>
-                      <Td align="right" mono className="font-semibold text-ink-900">
+                      <Td align="right" mono className="font-semibold text-ink-900" priority="primary">
                         {money(Number(emi.amount_due) + Number(emi.penalty_amount))}
                       </Td>
-                      <Td>
+                      <Td priority="primary">
                         <StatusBadge status={emi.status} />
                         {emi.days_past_due > 0 && (
                           <span className="mt-1 block text-[10px] text-danger-600">
@@ -222,7 +227,7 @@ export default async function LoanDetailPage({
                           </span>
                         )}
                       </Td>
-                      <Td align="right">
+                      <Td align="right" priority="primary">
                         {(emi.status === "UPCOMING" || emi.status === "OVERDUE") && (
                           <LoanActions type="pay" loanId={loan.id} emiId={emi.id} compact />
                         )}
@@ -255,29 +260,29 @@ export default async function LoanDetailPage({
               <TableWrap>
                 <thead>
                   <tr>
-                    <Th>Receipt</Th>
-                    <Th>Date</Th>
-                    <Th align="right">Amount</Th>
-                    <Th>Mode</Th>
-                    <Th>Status</Th>
-                    <Th>Transaction</Th>
+                    <Th priority="primary">Receipt</Th>
+                    <Th priority="primary">Date</Th>
+                    <Th align="right" priority="primary">Amount</Th>
+                    <Th priority="normal">Mode</Th>
+                    <Th priority="primary">Status</Th>
+                    <Th priority="hidden">Transaction</Th>
                   </tr>
                 </thead>
                 <tbody>
                   {payments.slice(0, 10).map((p) => (
                     <Tr key={p.id}>
-                      <Td mono className="text-ink-600">
+                      <Td mono className="text-ink-600" priority="primary">
                         {p.receipt_no}
                       </Td>
-                      <Td className="whitespace-nowrap">{formatDate(p.txn_date)}</Td>
-                      <Td align="right" mono className="font-semibold">
+                      <Td className="whitespace-nowrap" priority="primary">{formatDate(p.txn_date)}</Td>
+                      <Td align="right" mono className="font-semibold" priority="primary">
                         {money(p.amount)}
                       </Td>
-                      <Td className="text-[13px] text-ink-600">{p.mode}</Td>
-                      <Td>
+                      <Td className="text-[13px] text-ink-600" priority="normal">{p.mode}</Td>
+                      <Td priority="primary">
                         <StatusBadge status={p.status} />
                       </Td>
-                      <Td mono className="text-[11px] text-ink-400">
+                      <Td mono className="text-[11px] text-ink-400" priority="hidden">
                         {p.txn_id}
                       </Td>
                     </Tr>

@@ -77,14 +77,17 @@ export default async function StaffLoansPage() {
             <TableWrap>
               <thead>
                 <tr>
-                  <Th>Borrower</Th>
-                  <Th>Account</Th>
-                  <Th align="right">Instalment</Th>
-                  <Th align="right">Due</Th>
-                  <Th align="right">Days late</Th>
-                  <Th align="right">Amount</Th>
-                  <Th align="right">Penalty</Th>
-                  <Th align="right">Action</Th>
+                  {/* Borrower, Amount and the overdue-flag action are the
+                      working set. Account, instalment number and due date are
+                      reference detail from `sm`. */}
+                  <Th priority="primary">Borrower</Th>
+                  <Th priority="normal">Account</Th>
+                  <Th align="right" priority="hidden">Instalment</Th>
+                  <Th align="right" priority="normal">Due</Th>
+                  <Th align="right" priority="normal">Days late</Th>
+                  <Th align="right" priority="primary">Amount</Th>
+                  <Th align="right" priority="normal">Penalty</Th>
+                  <Th align="right" priority="primary">Action</Th>
                 </tr>
               </thead>
               <tbody>
@@ -97,7 +100,7 @@ export default async function StaffLoansPage() {
 
                   return (
                     <Tr key={e.id}>
-                      <Td>
+                      <Td priority="primary">
                         <div className="flex items-center gap-2.5">
                           <Avatar name={loan?.borrower?.full_name} size="sm" />
                           <div>
@@ -110,30 +113,30 @@ export default async function StaffLoansPage() {
                           </div>
                         </div>
                       </Td>
-                      <Td>
+                      <Td priority="normal">
                         <p className="text-ink-700">{loan?.product?.name}</p>
                         <p className="font-mono text-[11px] text-ink-400">
                           {loan?.account_number}
                         </p>
                       </Td>
-                      <Td align="right" mono>
+                      <Td align="right" mono priority="hidden">
                         #{e.installment_no}
                       </Td>
-                      <Td align="right" className="whitespace-nowrap">
+                      <Td align="right" className="whitespace-nowrap" priority="normal">
                         {formatDate(e.due_date)}
                       </Td>
-                      <Td align="right">
+                      <Td align="right" priority="normal">
                         <Badge tone={e.days_past_due > 30 ? "danger" : "warning"}>
                           {e.days_past_due}d
                         </Badge>
                       </Td>
-                      <Td align="right" mono className="font-semibold">
+                      <Td align="right" mono className="font-semibold" priority="primary">
                         {money(e.amount_due)}
                       </Td>
-                      <Td align="right" mono className="text-danger-700">
+                      <Td align="right" mono className="text-danger-700" priority="normal">
                         {Number(e.penalty_amount) > 0 ? money(e.penalty_amount) : "—"}
                       </Td>
-                      <Td align="right">
+                      <Td align="right" priority="primary">
                         <FlagOverdueButton emiId={e.id} />
                       </Td>
                     </Tr>
@@ -155,13 +158,13 @@ export default async function StaffLoansPage() {
             <TableWrap>
               <thead>
                 <tr>
-                  <Th>Account</Th>
-                  <Th>Borrower</Th>
-                  <Th>Product</Th>
-                  <Th align="right">Principal</Th>
-                  <Th align="right">Outstanding</Th>
-                  <Th>Status</Th>
-                  <Th align="right">Repaid</Th>
+                  <Th priority="normal">Account</Th>
+                  <Th priority="primary">Borrower</Th>
+                  <Th priority="primary">Product</Th>
+                  <Th align="right" priority="hidden">Principal</Th>
+                  <Th align="right" priority="primary">Outstanding</Th>
+                  <Th priority="primary">Status</Th>
+                  <Th align="right" priority="normal">Repaid</Th>
                 </tr>
               </thead>
               <tbody>
@@ -173,28 +176,28 @@ export default async function StaffLoansPage() {
 
                   return (
                     <Tr key={loan.id}>
-                      <Td mono className="text-ink-600">
+                      <Td mono className="text-ink-600" priority="normal">
                         {loan.account_number}
                       </Td>
-                      <Td className="font-medium text-ink-900">
+                      <Td className="font-medium text-ink-900" priority="primary">
                         {loan.borrower?.full_name}
                       </Td>
-                      <Td>
+                      <Td priority="primary">
                         <span className="flex items-center gap-1.5">
                           <span>{loan.product?.thumbnail_emoji}</span>
                           <span className="text-ink-700">{loan.product?.name}</span>
                         </span>
                       </Td>
-                      <Td align="right" mono>
+                      <Td align="right" mono priority="hidden">
                         {money(loan.principal)}
                       </Td>
-                      <Td align="right" mono className="font-semibold">
+                      <Td align="right" mono className="font-semibold" priority="primary">
                         {money(loan.outstanding_principal)}
                       </Td>
-                      <Td>
+                      <Td priority="primary">
                         <StatusBadge status={loan.status} />
                       </Td>
-                      <Td align="right" className="w-32">
+                      <Td align="right" className="w-32" priority="normal">
                         <ProgressBar value={repaid} size="sm" tone="positive" />
                         <span className="tabular-nums mt-1 block text-[10px] text-ink-400">
                           {repaid.toFixed(0)}% · {tenure(loan.tenure_months)}

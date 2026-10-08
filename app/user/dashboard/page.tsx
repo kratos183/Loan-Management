@@ -227,31 +227,31 @@ export default async function UserDashboardPage() {
             <TableWrap>
               <thead>
                 <tr>
-                  <Th>Reference</Th>
-                  <Th>Product</Th>
-                  <Th>Amount</Th>
-                  <Th>Status</Th>
-                  <Th align="right">Applied</Th>
+                  <Th priority="primary">Reference</Th>
+                  <Th priority="primary">Product</Th>
+                  <Th priority="primary">Amount</Th>
+                  <Th priority="primary">Status</Th>
+                  <Th align="right" priority="normal">Applied</Th>
                 </tr>
               </thead>
               <tbody>
                 {applications.slice(0, 6).map((app) => (
                   <Tr key={app.id}>
-                    <Td mono className="text-brand-700">
+                    <Td mono className="text-brand-700" priority="primary">
                       <Link href={`/user/applications/${app.id}`}>{app.reference_no}</Link>
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <span className="block font-medium text-ink-900">{app.product?.name}</span>
                       <span className="text-xs text-ink-400">
                         {app.product?.category === "SECURED" ? "Secured" : "Unsecured"}
                         {app.tenure_months ? ` · ${tenure(app.tenure_months)}` : ""}
                       </span>
                     </Td>
-                    <Td mono>{money(app.requested_amount)}</Td>
-                    <Td>
+                    <Td mono priority="primary">{money(app.requested_amount)}</Td>
+                    <Td priority="primary">
                       <StatusBadge status={app.status} />
                     </Td>
-                    <Td align="right" className="text-xs text-ink-400">
+                    <Td align="right" className="text-xs text-ink-400" priority="normal">
                       {relativeTime(app.created_at)}
                     </Td>
                   </Tr>

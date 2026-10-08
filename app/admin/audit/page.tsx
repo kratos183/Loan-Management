@@ -43,11 +43,15 @@ export default async function AdminAuditPage() {
           <TableWrap>
             <thead>
               <tr>
-                <Th>When</Th>
-                <Th>Actor</Th>
-                <Th>Action</Th>
-                <Th>Entity</Th>
-                <Th>Detail</Th>
+                {/* An audit trail has no dispensable column — dropping any of
+                    it would hide the record someone came to audit. So only the
+                    two widest are trimmed, and the wrapper still scrolls
+                    horizontally as a safety net. */}
+                <Th priority="primary">When</Th>
+                <Th priority="primary">Actor</Th>
+                <Th priority="primary">Action</Th>
+                <Th priority="normal">Entity</Th>
+                <Th priority="normal">Detail</Th>
               </tr>
             </thead>
             <tbody>
@@ -59,10 +63,10 @@ export default async function AdminAuditPage() {
 
                 return (
                   <Tr key={log.id}>
-                    <Td className="whitespace-nowrap text-xs text-ink-500">
+                    <Td className="whitespace-nowrap text-xs text-ink-500" priority="primary">
                       {formatDateTime(log.created_at)}
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <div className="flex items-center gap-2">
                         <Avatar name={actor?.full_name ?? "System"} size="xs" />
                         <div className="min-w-0">
@@ -77,18 +81,18 @@ export default async function AdminAuditPage() {
                         </div>
                       </div>
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <Badge tone={ACTION_TONES[log.action] ?? "neutral"}>
                         {log.action}
                       </Badge>
                     </Td>
-                    <Td className="font-mono text-[11px] text-ink-500">
+                    <Td className="font-mono text-[11px] text-ink-500" priority="normal">
                       {log.entity_type}
                       {log.entity_id && (
                         <span className="block text-ink-300">{log.entity_id.slice(0, 8)}</span>
                       )}
                     </Td>
-                    <Td className="text-[13px] text-ink-700">{log.summary ?? "—"}</Td>
+                    <Td className="text-[13px] text-ink-700" priority="normal">{log.summary ?? "—"}</Td>
                   </Tr>
                 );
               })}

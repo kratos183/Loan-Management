@@ -225,37 +225,37 @@ export function EmiCalculator() {
             <TableWrap>
               <thead>
                 <tr>
-                  <Th>#</Th>
-                  <Th>Due</Th>
-                  <Th align="right">Principal</Th>
-                  <Th align="right">Interest</Th>
-                  <Th align="right">Total</Th>
-                  <Th align="right">Balance</Th>
+                  <Th priority="hidden">#</Th>
+                  <Th priority="primary">Due</Th>
+                  <Th align="right" priority="normal">Principal</Th>
+                  <Th align="right" priority="normal">Interest</Th>
+                  <Th align="right" priority="primary">Total</Th>
+                  <Th align="right" priority="normal">Balance</Th>
                 </tr>
               </thead>
               <tbody>
                 {schedule.map((row) => (
                   <Tr key={row.installmentNo}>
-                    <Td mono className="text-ink-400">
+                    <Td mono className="text-ink-400" priority="hidden">
                       {row.installmentNo}
                     </Td>
-                    <Td className="whitespace-nowrap text-xs">
+                    <Td className="whitespace-nowrap text-xs" priority="primary">
                       {new Date(row.dueDate).toLocaleDateString("en-IN", {
                         day: "2-digit",
                         month: "short",
                         year: "2-digit",
                       })}
                     </Td>
-                    <Td align="right" mono>
+                    <Td align="right" mono priority="normal">
                       {money(row.principalPart)}
                     </Td>
-                    <Td align="right" mono className="text-warning-700">
+                    <Td align="right" mono className="text-warning-700" priority="normal">
                       {money(row.interestPart)}
                     </Td>
-                    <Td align="right" mono className="font-semibold text-ink-900">
+                    <Td align="right" mono className="font-semibold text-ink-900" priority="primary">
                       {money(row.amountDue)}
                     </Td>
-                    <Td align="right" mono className="text-ink-500">
+                    <Td align="right" mono className="text-ink-500" priority="normal">
                       {money(row.closingBalance)}
                     </Td>
                   </Tr>

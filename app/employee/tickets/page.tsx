@@ -108,19 +108,19 @@ export default async function StaffTicketsPage() {
             <TableWrap>
               <thead>
                 <tr>
-                  <Th>Customer</Th>
-                  <Th>Subject</Th>
-                  <Th>Category</Th>
-                  <Th>Priority</Th>
-                  <Th>Status</Th>
-                  <Th align="right">Raised</Th>
-                  <Th align="right" />
+                  <Th priority="primary">Customer</Th>
+                  <Th priority="primary">Subject</Th>
+                  <Th priority="hidden">Category</Th>
+                  <Th priority="normal">Priority</Th>
+                  <Th priority="primary">Status</Th>
+                  <Th align="right" priority="normal">Raised</Th>
+                  <Th align="right" priority="primary" />
                 </tr>
               </thead>
               <tbody>
                 {myTickets.map((t) => (
                   <Tr key={t.id}>
-                    <Td>
+                    <Td priority="primary">
                       <div className="flex items-center gap-2.5">
                         <Avatar name={t.customer?.full_name} size="sm" />
                         <div className="min-w-0">
@@ -133,23 +133,23 @@ export default async function StaffTicketsPage() {
                         </div>
                       </div>
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <p className="font-medium text-ink-800">{t.subject}</p>
                       <p className="line-clamp-1 text-[11px] text-ink-400">
                         {t.description}
                       </p>
                     </Td>
-                    <Td className="text-[13px] text-ink-600">{t.category}</Td>
-                    <Td>
+                    <Td className="text-[13px] text-ink-600" priority="hidden">{t.category}</Td>
+                    <Td priority="normal">
                       <StatusBadge status={t.priority} />
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <StatusBadge status={t.status} />
                     </Td>
-                    <Td align="right" className="text-xs text-ink-400">
+                    <Td align="right" className="text-xs text-ink-400" priority="normal">
                       {relativeTime(t.created_at)}
                     </Td>
-                    <Td align="right">
+                    <Td align="right" priority="primary">
                       <TicketActions ticketId={t.id} compact />
                     </Td>
                   </Tr>

@@ -68,32 +68,32 @@ export default async function TicketsPage() {
               <TableWrap>
                 <thead>
                   <tr>
-                    <Th>Ticket</Th>
-                    <Th>Subject</Th>
-                    <Th>Priority</Th>
-                    <Th>Status</Th>
-                    <Th align="right">Raised</Th>
+                    <Th priority="normal">Ticket</Th>
+                    <Th priority="primary">Subject</Th>
+                    <Th priority="primary">Priority</Th>
+                    <Th priority="primary">Status</Th>
+                    <Th align="right" priority="normal">Raised</Th>
                   </tr>
                 </thead>
                 <tbody>
                   {tickets.map((t) => (
                     <Tr key={t.id}>
-                      <Td mono className="text-ink-500">
+                      <Td mono className="text-ink-500" priority="normal">
                         {t.ticket_no}
                       </Td>
-                      <Td>
+                      <Td priority="primary">
                         <p className="font-medium text-ink-900">{t.subject}</p>
                         <p className="line-clamp-1 text-[11px] text-ink-400">
                           {t.description}
                         </p>
                       </Td>
-                      <Td>
+                      <Td priority="primary">
                         <StatusBadge status={t.priority} />
                       </Td>
-                      <Td>
+                      <Td priority="primary">
                         <StatusBadge status={t.status} />
                       </Td>
-                      <Td align="right" className="text-xs text-ink-400">
+                      <Td align="right" className="text-xs text-ink-400" priority="normal">
                         {relativeTime(t.created_at)}
                       </Td>
                     </Tr>

@@ -222,29 +222,29 @@ export default async function AdminDashboardPage() {
             <TableWrap>
               <thead>
                 <tr>
-                  <Th>Account</Th>
-                  <Th align="right">Principal</Th>
-                  <Th align="right">Outstanding</Th>
-                  <Th>Status</Th>
-                  <Th align="right">Disbursed</Th>
+                  <Th priority="primary">Account</Th>
+                  <Th align="right" priority="normal">Principal</Th>
+                  <Th align="right" priority="primary">Outstanding</Th>
+                  <Th priority="primary">Status</Th>
+                  <Th align="right" priority="normal">Disbursed</Th>
                 </tr>
               </thead>
               <tbody>
                 {stats.loans.slice(0, 8).map((loan) => (
                   <Tr key={loan.id}>
-                    <Td mono className="text-ink-600">
+                    <Td mono className="text-ink-600" priority="primary">
                       {loan.account_number}
                     </Td>
-                    <Td align="right" mono>
+                    <Td align="right" mono priority="normal">
                       {money(loan.principal)}
                     </Td>
-                    <Td align="right" mono className="font-semibold">
+                    <Td align="right" mono className="font-semibold" priority="primary">
                       {money(loan.outstanding_principal)}
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <StatusBadge status={loan.status} />
                     </Td>
-                    <Td align="right" className="text-xs text-ink-400">
+                    <Td align="right" className="text-xs text-ink-400" priority="normal">
                       {formatDate(loan.disbursed_at)}
                     </Td>
                   </Tr>

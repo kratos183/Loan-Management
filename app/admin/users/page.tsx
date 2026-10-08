@@ -120,19 +120,19 @@ export default async function AdminUsersPage({
             <TableWrap>
               <thead>
                 <tr>
-                  <Th>User</Th>
-                  <Th>Contact</Th>
-                  <Th>Role</Th>
-                  <Th>Status</Th>
-                  <Th align="right">Income</Th>
-                  <Th align="right">Joined</Th>
-                  <Th align="right">Access</Th>
+                  <Th priority="primary">User</Th>
+                  <Th priority="primary">Contact</Th>
+                  <Th priority="primary">Role</Th>
+                  <Th priority="primary">Status</Th>
+                  <Th align="right" priority="hidden">Income</Th>
+                  <Th align="right" priority="normal">Joined</Th>
+                  <Th align="right" priority="normal">Access</Th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((user) => (
                   <Tr key={user.id}>
-                    <Td>
+                    <Td priority="primary">
                       <div className="flex items-center gap-2.5">
                         <Avatar name={user.full_name} size="sm" />
                         <div className="min-w-0">
@@ -143,13 +143,13 @@ export default async function AdminUsersPage({
                         </div>
                       </div>
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <p className="truncate text-ink-700">{user.email}</p>
                       {user.phone && (
                         <p className="text-[11px] text-ink-400">{user.phone}</p>
                       )}
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <Badge
                         tone={
                           user.role === "ADMIN"
@@ -162,16 +162,16 @@ export default async function AdminUsersPage({
                         {user.role === "USER" ? "Borrower" : user.role === "EMPLOYEE" ? "Employee" : "Admin"}
                       </Badge>
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <StatusBadge status={user.status} />
                     </Td>
-                    <Td align="right" mono>
+                    <Td align="right" mono priority="hidden">
                       {user.monthly_income ? moneyCompact(user.monthly_income) : "—"}
                     </Td>
-                    <Td align="right" className="text-xs text-ink-400">
+                    <Td align="right" className="text-xs text-ink-400" priority="normal">
                       {formatDate(user.created_at)}
                     </Td>
-                    <Td align="right">
+                    <Td align="right" priority="normal">
                       <AccessControl user={user} isSelf={user.id === ctx.session.user.id} />
                     </Td>
                   </Tr>

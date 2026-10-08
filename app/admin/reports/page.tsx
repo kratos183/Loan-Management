@@ -225,13 +225,13 @@ export default async function AdminReportsPage() {
             <TableWrap>
               <thead>
                 <tr>
-                  <Th>Borrower</Th>
-                  <Th>Product</Th>
-                  <Th align="right">Instalment</Th>
-                  <Th align="right">Due</Th>
-                  <Th align="right">Days past due</Th>
-                  <Th align="right">Amount</Th>
-                  <Th align="right">Penalty</Th>
+                  <Th priority="primary">Borrower</Th>
+                  <Th priority="primary">Product</Th>
+                  <Th align="right" priority="hidden">Instalment</Th>
+                  <Th align="right" priority="normal">Due</Th>
+                  <Th align="right" priority="primary">Days past due</Th>
+                  <Th align="right" priority="primary">Amount</Th>
+                  <Th align="right" priority="normal">Penalty</Th>
                 </tr>
               </thead>
               <tbody>
@@ -243,7 +243,7 @@ export default async function AdminReportsPage() {
                   } | null;
                   return (
                     <Tr key={e.id}>
-                      <Td>
+                      <Td priority="primary">
                         <span className="font-medium text-ink-900">
                           {loan?.borrower?.full_name}
                         </span>
@@ -251,27 +251,27 @@ export default async function AdminReportsPage() {
                           {loan?.borrower?.phone}
                         </span>
                       </Td>
-                      <Td>
+                      <Td priority="primary">
                         <span className="block text-ink-800">{loan?.product?.name}</span>
                         <span className="font-mono text-[11px] text-ink-400">
                           {loan?.account_number}
                         </span>
                       </Td>
-                      <Td align="right" mono>
+                      <Td align="right" mono priority="hidden">
                         #{e.installment_no}
                       </Td>
-                      <Td align="right" className="whitespace-nowrap">
+                      <Td align="right" className="whitespace-nowrap" priority="normal">
                         {formatDate(e.due_date)}
                       </Td>
-                      <Td align="right">
+                      <Td align="right" priority="primary">
                         <Badge tone={e.days_past_due > 30 ? "danger" : "warning"}>
                           {e.days_past_due}d
                         </Badge>
                       </Td>
-                      <Td align="right" mono className="font-semibold">
+                      <Td align="right" mono className="font-semibold" priority="primary">
                         {money(e.amount_due)}
                       </Td>
-                      <Td align="right" mono className="text-danger-700">
+                      <Td align="right" mono className="text-danger-700" priority="normal">
                         {Number(e.penalty_amount) > 0 ? money(e.penalty_amount) : "—"}
                       </Td>
                     </Tr>
@@ -290,12 +290,12 @@ export default async function AdminReportsPage() {
           <TableWrap>
             <thead>
               <tr>
-                <Th>Reference</Th>
-                <Th>Applicant</Th>
-                <Th>Product</Th>
-                <Th align="right">Amount</Th>
-                <Th>Outcome</Th>
-                <Th align="right">Decided</Th>
+                <Th priority="primary">Reference</Th>
+                <Th priority="primary">Applicant</Th>
+                <Th priority="primary">Product</Th>
+                <Th align="right" priority="primary">Amount</Th>
+                <Th priority="primary">Outcome</Th>
+                <Th align="right" priority="normal">Decided</Th>
               </tr>
             </thead>
             <tbody>
@@ -304,20 +304,20 @@ export default async function AdminReportsPage() {
                 .slice(0, 12)
                 .map((a) => (
                   <Tr key={a.id}>
-                    <Td mono className="text-brand-700">
+                    <Td mono className="text-brand-700" priority="primary">
                       {a.reference_no}
                     </Td>
-                    <Td className="font-medium text-ink-900">
+                    <Td className="font-medium text-ink-900" priority="primary">
                       {a.applicant?.full_name}
                     </Td>
-                    <Td className="text-ink-700">{a.product?.name}</Td>
-                    <Td align="right" mono>
+                    <Td className="text-ink-700" priority="primary">{a.product?.name}</Td>
+                    <Td align="right" mono priority="primary">
                       {money(a.requested_amount)}
                     </Td>
-                    <Td>
+                    <Td priority="primary">
                       <StatusBadge status={a.status} />
                     </Td>
-                    <Td align="right" className="text-xs text-ink-400">
+                    <Td align="right" className="text-xs text-ink-400" priority="normal">
                       {formatDate(a.decided_at)}
                     </Td>
                   </Tr>
