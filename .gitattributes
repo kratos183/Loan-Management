@@ -1,0 +1,24 @@
+# Normalise line endings so diffs stay readable across Windows and macOS/Linux.
+* text=auto eol=lf
+
+# Keep Windows-native line endings only where it matters.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Files Git should treat as binary — never diff these.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+
+# Lockfiles: keep them out of language statistics but always committed.
+package-lock.json linguist-generated=true -diff
+
+# Generated SQL and migrations: still reviewable, but not counted as prose.
+supabase/migrations/*.sql linguist-detectable=false

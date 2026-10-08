@@ -1,0 +1,106 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CI — runs on every push and pull request
+#
+# The gate is deliberately layered from cheapest to most expensive, so a typo
+# in a SQL comment fails in seconds rather than after a full build:
+#
+#   1. typecheck    — TypeScript, no build needed
+#   2. test         — EMI / amortisation / underwriting maths
+#   3. db:check     — SQL parses with libpg_query + structural checks
+#   4. build        — full production build
+#
+# DATABASE-dependent checks (db:migrate, db:verify, db:embeds, smoke) run only
+# on `main` and on manual dispatch, because they need real credentials. See
+# ci-live.yml.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel superseded runs on the same branch — saves CI minutes on busy days.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 1. Types ────────────────────────────────────────────────────────────
+      - name: Typecheck
+        run: npm run typecheck
+
+      # ── 2. Unit tests (EMI maths, underwriting rules) ──────────────────────
+      - name: Unit tests
+        run: npm test
+
+      # ── 3. SQL migrations: real parser + structural checks ──────────────────
+      # db:check needs no database and no secrets, so every PR gets it.
+      - name: Validate SQL migrations
+        run: npm run db:check
+
+      # Guards the two mistakes that cost the most time so far:
+      #   - a real foreign-key constraint used as a PostgREST embed hint
+      #   - functions/components passed across the server→client boundary
+      - name: Check for React boundary violations
+        run: |
+          if grep -rn --include='*.tsx' --include='*.ts' \
+            'sections={' app lib 2>/dev/null; then
+            echo "::error::Nav config contains icon components — pass the portal name and import it on the client instead."
+            exit 1
+          fi
+          echo "No Server→Client component leaks found."
+
+      # ── 4. Production build ────────────────────────────────────────────────
+      # Placeholder values: the build must not depend on a live project, which
+      # keeps forks and PRs from contributors able to build.
+      - name: Build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
+        run: npm run build
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: .next/
+          retention-days: 5
+
+  # Separate job so a build failure is clearly distinguishable from a test failure.
+  summary:
+    name: Summary
+    runs-on: ubuntu-latest
+    needs: verify
+    if: always()
+    steps:
+      - name: Report
+        run: |
+          if [ "${{ needs.verify.result }}" = "success" ]; then
+            echo "### ✅ All checks passed" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### ❌ Checks failed (${{ needs.verify.result }})" >> "$GITHUB_STEP_SUMMARY"
+          fi

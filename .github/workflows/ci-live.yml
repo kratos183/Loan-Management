@@ -1,0 +1,98 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Live checks — require real Supabase credentials.
+#
+# Deliberately NOT part of the per-PR gate: these need a database and the
+# service_role key, so running them on every fork's pull request would mean
+# exposing credentials. They run:
+#
+#   • manually, from the Actions tab (workflow_dispatch)
+#   • after merge to main
+#
+# Secrets needed (Settings → Secrets and variables → Actions):
+#   DATABASE_URL              pooled connection string, port 6543
+#   NEXT_PUBLIC_SUPABASE_URL  https://<ref>.supabase.co   (no /rest/v1)
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY
+#   SUPABASE_SERVICE_ROLE_KEY
+#
+# Use a dedicated throwaway Supabase project for CI. The seed truncates
+# application tables, so never point this at production.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: Live database checks
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_seed:
+        description: "Re-apply the seed (destructive — truncates app tables)"
+        required: false
+        default: false
+        type: boolean
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "scripts/**"
+
+concurrency:
+  group: live-db-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    name: Migrations, data integrity and route smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply migrations
+        run: npm run db:migrate
+
+      - name: Verify seed data
+        run: npm run db:verify
+
+      # Every PostgREST embed used by a page, executed against the real catalog.
+      # Catches hand-written constraint-name typos that only fail at runtime.
+      - name: Verify PostgREST embeds
+        run: npm run db:embeds
+
+      # Renders every route with a real session. next build cannot catch these
+      # because the pages are session-scoped and never prerendered.
+      - name: Start the app
+        run: |
+          npm run dev > /tmp/dev.log 2>&1 &
+          echo $! > /tmp/dev.pid
+          for i in $(seq 1 40); do
+            if curl -sf -o /dev/null http://localhost:3000/login; then
+              echo "dev server up after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "dev server never became ready"
+          cat /tmp/dev.log
+          exit 1
+
+      - name: Smoke test every route
+        run: npm run smoke
+
+      - name: Server log on failure
+        if: failure()
+        run: cat /tmp/dev.log
+
+      - name: Stop the app
+        if: always()
+        run: kill "$(cat /tmp/dev.pid)" 2>/dev/null || true

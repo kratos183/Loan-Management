@@ -30,12 +30,42 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# ─── Secrets ────────────────────────────────────────────────────────────────
+# Never commit these, not even to a private repo. They bypass Row Level
+# Security and the database password grants full access.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+service-role*.json
+supabase/.temp/
+supabase/.branches/
+
+# If any of the above still shows as untracked in `git status`, your
+# .gitignore is not being honoured — stop and fix that before committing.
 
 # vercel
 .vercel
+.vercel_build_output
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# testing
+/test-results
+/playwright-report
+/playwright/.cache
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+Thumbs.db
+*.swp
+
+# logs
+*.log

@@ -1,0 +1,242 @@
+HOME PAGE STARTS WITH LOGIN SCREEN 
+
+
+AFTER ONCE LOGIN VERIFIED -->  ( USER PORTALE , EMP PORTALE , ADMIN PORTABLE ) --> HOME
+
+
+
+USER HOME --> DASHBOARD > NEW LOAN , APPLICATION STATUS , CURRENT LOAN STAUS , EMI CALCULATOR , CIBIL SCORE , PAYMENT HISTORY , CHATBOT .
+
+	NEW LOAN --> Unsecured Loans (NO COLLATERAL ), Secured Loans (with collateral) 
+
+			-->Secured Loans ( COLLATERAL )
+				--> Home loans 
+				--> vechile loans
+				--> Gold loans 
+				--> loan against property
+				--> loan against security 
+
+			--> Unsecured Loans (NO COLLATERAL )
+				--> Personal Loans
+				--> Education Loans
+				--> Business/Working Capital Loans(managing day-to-day business operations or inventory)
+				--> Credit Card Loans
+
+			
+		Secured Loans --> VALIDATION & VERIFICATION 
+
+			PART A (Basic req for applicant)
+				--> Identity (KYC/PAN/Aadhaar)
+ 				--> Residence (Address proof)
+				--> Identity (KYC/PAN/Aadhaar)
+				--> Residence (Address proof)
+				--> Income (Salary/ITR/Revenue)
+				--> Banking (Statements/Flow)
+				--> Credit (Score/History)
+				--> Liability (Debts/Obligations)
+
+			PART B (change for loan cateria)
+				--> Property Collateral
+					--> Title (Ownership deed)
+					--> Clearance (Encumbrance/EC)
+					--> Taxation (Receipts)
+					--> Sanction (Approved plan)
+						
+				--> Vehicle Collateral
+					--> Registration (RC book)
+					--> Insurance (Policy)
+					--> Valuation (Condition report)
+					--> Hypothecation (Transfer forms)
+					
+				--> Financial Collateral
+					--> Receipt (FD certificate)
+					--> Statement (Demat/Holdings)
+					--> Lien (Pledge authorization)
+
+				--> Gold Collateral
+					--> Purity (Carat check)
+					--> Weight (Mass/Grammage)
+
+		
+
+
+
+			PART C 
+				TC ACKNOWLEDGEMENT & SUMBIT 
+
+
+
+		Unsecured Loans --> VALIDATION & VERIFICATION 
+
+			PART A (Basic req for applicant )
+				
+				--> Identity (KYC/PAN/Aadhaar)
+				--> Residence (Address proof)
+				--> Employment (Job status)
+				--> Employer (Company name)
+				--> Tenure (Work experience)
+
+
+			PART B (Applicant status --> Financial & Risk Assessment)
+				--> Income (Salary/ITR/Revenue)
+				--> Banking (Statements/Flow)
+				--> Credit (Score/History)
+				--> Liability (Debts/Obligations)
+				--> Obligation (FOIR/Fixed monthly expenses)
+				--> Levy (Tax filings/GST)
+
+			PART C ( Verification & Validation for collateral ) 
+				--> person 
+					--> Id validation 
+					--> sign & consent form 
+					--> TC ACKNOWLEDGEMENT & SUMBIT (Collatarel acknowledgement )
+
+				--> property & Asset
+					--> Document validation (Documentation proof)
+					--> Sign & consent form 
+					--> TC ACKNOWLEDGEMENT & SUMBIT (Collatarel acknowledgement )
+
+				
+			PART D
+				TC ACKNOWLEDGEMENT & SUMBIT 
+	
+		==> Moving to applicant status page 
+		
+	
+	****************************************************************************************
+APPLICANT STATUS --> (PENDING , APPROVED , FAILED , RESUBMISSION ) 
+
+	PENDING --> MINIMUM TO MAXIMUM TIME TO RESULT 
+			HOVER --> SHOWS OFFICER WHO'S ASSIGNED AND IF INCASE CUSTOMER NEEDED TO KNOW DETAILS MEANS MOVE TO CHAT SUPPORT 
+				--> CUSTOMER WHEN USE CHAT SUPPORT -->  WHILE PENDING --> NOTIFY OFFICER IN EMP PORTALE 
+				--> AFTER EMP RPLY --> NOTIFY USER (USER PORTALE )
+
+	APPROVED --> TRANSACTION STATUS
+			--> TRANSACTION ID 
+			--> TRANSACTION DATE 
+			--> ACCOUNT NUMBER 
+			--> CREDITED / PENDING 
+				==> Current loan page 
+	Failed -->
+			--> like rejected 
+			--> once user get reject 
+				--> mark them and if they apply again means stop them in apply process
+				--> once user get marked like rejected they cant able to apply same catergory for next three months 
+				--> once three months notify to both user & emp . 
+	Resubmission --> ( Edit )
+			--> when emp open approve for this only user can able to this. 
+			--> specified part will be able to edit by the user based on emp access. 
+ 			--> after submission , mention or mark like resubmission made in this process in approval status 
+		
+==> move to loan status page after this 
+
+
+
+
+**********************************************************************************************
+
+CURRENT LOAN STAUS --> LOAN DETAILS (SPECIFIED LOAN)
+
+	LOAN DETAILS --> LAST PAYMENT , NEXT PAYMENT , OVERDUE , CALL SUPPORT  , NOC . 
+			
+ 		LAST PAYMENT --> LAST PAYMENT DATE 
+			     --> LAST PAYMENT VALUE 
+			     --> NEEDED GENERATE E-BILL 
+			     --> MARK WHEN LAST MONTH PAYMENT HAVE OVERDUE 
+
+		NEXT PAYMENT --> NEXT PAYMENT DATE 
+			     --> NEXT PAYMENT VALUE 
+			     --> PRE-PAYMENT 
+				     -->IF PRE-PAYMENT DONE MEANS MARK THIS PROCESS TO EMP PORTABLE 
+				     --> GENERATE E-BILL FOR THIS PAYMENT 
+			     ==> dashboard 
+
+
+		Overdue     --> Notify user when emp mark OD  for user 
+			    --> payment 
+			    -->IF PRE-PAYMENT DONE MEANS MARK THIS PROCESS TO EMP PORTABLE
+				     --> GENERATE E-BILL FOR THIS PAYMENT		
+			    ==> dashboard
+			
+		call support
+			    --> if any issue from user rise ticket to user 
+				--> make connection chat bot with ticket
+	
+		
+		NOC -->
+			   Active --> when user complete full amount of loan tenture (claim NOC )
+				claim NOC --> when emp approves (download will be active in the user portale )
+				download NOC --> once emp approved mark this loan can download noc they want.
+
+
+******************************************************************************************************************************************
+
+PAYMENT HISTORY 
+		--> PAID PAYMENT (HISTORY PREVIOUS PAYMENT IN THIS LOAN) 
+		--> SHOW OVER DUES AND BOUNCE CHARGE MENTION WHEN OVER DUE HAPPENS 
+		--> SHOW UPCOMING PAYMENT FUTURE DATE 
+		--> TRANSACTION STATUS 
+		--> DOWNLOAD OPTION .
+
+
+******************************************************************************************************************************************
+
+EMI CALCULATOR 
+		BASIC EMI CALCULATOR 
+			--> AMOUNT 
+			--> INTEREST 
+			--> PERIOD 
+			--> RESULT 
+
+
+******************************************************************************************************************************************
+
+
+CIBIL SCORE --> VALIDATION & RESULT 
+ 
+		INPUT : ID PROOF --> VALIDATION 
+
+			--> THIRD PARTY API --> RESULT --> OUR API --> DB --> SHOW IN DASHBOARD .
+			DASHBOARD --> SHOW FOR SOME TIMES ONLY IN THE DASH BOARD. 
+			PERIOD EXPIRE AGAIN FROM VALIDATION REPEATS 
+
+******************************************************************************************************************************************
+
+CHAT BOT --> BASED ON TIMING WE CREATE ENCHANCE ONE
+
+
+
+
+****************************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

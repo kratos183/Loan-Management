@@ -1,0 +1,21 @@
+# Reviewers for sensitive areas.
+#
+# Repo owners do not get a GitHub notification from CODEOWNERS alone — these
+# are a routing aid. For real enforcement use branch protection
+# (Settings → Branches → Branch protection rules) to make certain paths
+# require a specific reviewer.
+
+*                       @chandstack
+
+# Financial logic — wrong numbers here are the expensive kind of wrong.
+/lib/finance/           @chandstack
+/tests/                 @chandstack
+
+# Database, RLS and migrations.
+/supabase/              @chandstack
+/lib/supabase/          @chandstack
+
+# Authentication and authorisation.
+/proxy.ts               @chandstack
+/lib/auth.ts            @chandstack
+/lib/actions/auth.ts    @chandstack

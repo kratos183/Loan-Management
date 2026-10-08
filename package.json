@@ -5,20 +5,49 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx tests/finance.test.ts",
+    "db:check": "tsx scripts/check-sql.ts && node scripts/parse-sql.mjs supabase/migrations/0001_core_schema.sql supabase/migrations/0002_seed.sql",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:verify": "node scripts/verify-seed.mjs",
+    "db:users": "tsx scripts/create-demo-users.ts",
+    "db:users:reset": "tsx scripts/create-demo-users.ts --reset",
+    "db:diagnose": "node scripts/diagnose-login.mjs",
+    "db:relations": "node scripts/diagnose-relations.mjs",
+    "db:embeds": "node scripts/check-embeds.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "db:types": "supabase gen types typescript --local > lib/db/database.types.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.2",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
+    "lucide-react": "^1.52.0",
     "next": "16.4.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-hook-form": "^7.89.0",
+    "recharts": "^3.10.1",
+    "server-only": "^0.0.1",
+    "tailwind-merge": "^3.7.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@supabase/pg-parser": "^0.1.7",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "dotenv": "^18.0.6",
+    "pg": "^8.23.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }
