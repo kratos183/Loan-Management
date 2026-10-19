@@ -1,63 +1,54 @@
-# SafarLoan — Loan Management Platform
+# 💳 SafarLoan — Loan Management Platform
 
-A three-portal digital lending platform built from `USER-OMA.txt`: applicants apply
-and service loans, loan officers verify and sanction, admins manage users,
-products and reporting.
+**A three-portal digital lending platform built from `USER-OMA.txt` — applicants apply and service loans, loan officers verify and sanction, admins manage users, products and reporting.**
 
-**Stack:** Next.js 16 (App Router, Turbopack) · React 19 · TypeScript · Tailwind CSS 4 ·
-Supabase (Postgres + Auth + Realtime + Storage)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=20232A)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%C2%B7%20Auth%20%C2%B7%20Realtime%20%C2%B7%20Storage-3ECF8E?style=flat-square&logo=supabase&logoColor=black)](https://supabase.com)
+[![Vercel](https://img.shields.io/badge/Vercel-deployed-000?style=flat-square&logo=vercel&logoColor=white)](https://vercel.com)
+[![CI](https://img.shields.io/badge/CI-typecheck%20%C2%B7%20test%20%C2%B7%20build%20%C2%B7%20db%3Acheck-8A2BE2?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
+[![PRs](https://img.shields.io/badge/PRs-2%20approvals%20required-8957E5?style=flat-square)](CONTRIBUTING.md)
+
+<img width="100%" src="docs/screenshots/hero-portals.png" alt="User, Officer and Admin portals side by side" />
 
 ---
 
-## Team workflow
+## Why this repo is shaped the way it is
 
-This is the `main` repository — treat `main` as protected and land changes
-only through pull requests. Full detail in [CONTRIBUTING.md](CONTRIBUTING.md).
+Three portals, one database — so **Row Level Security is the security model**, not an
+optional extra. Every money calculation is covered by a test suite, because an EMI
+that is off by a few paise is a support ticket forever. And the two things teams
+usually get wrong on Next.js + Supabase are documented here before they bite you:
+`proxy.ts` instead of the deprecated `middleware.ts`, and a seed that has to run
+*after* auth users, not before.
 
-```bash
-git checkout main && git pull
-git checkout -b feat/short-description
-# ... work, running the checks below locally ...
-git commit -m "feat(scope): what changed"
-git push -u origin feat/short-description
-# open a PR against main
-```
+> **Try it in 5 minutes** — clone, paste four Supabase keys, run `npm run db:setup`.
+> Demo accounts are seeded; password for all of them is `demo1234`.
 
-| Rule | Why |
-|---|---|
-| Never push directly to `main` | CI runs on every PR; direct pushes skip it |
-| Two approvals, one from a non-author | Money maths and RLS need a second pair of eyes |
-| `npm run smoke` before opening a PR | `next build` cannot catch session-scoped render errors |
-| Add a migration rather than editing a shipped one | `0001` is idempotent, so re-running it is safe; already-applied migrations are not replayed by others' databases |
-
-### Automated checks
-
-| Command | Needs a database | Runs on every PR |
+|  |  |  |
 |---|---|---|
-| `npm run typecheck` | no | ✅ |
-| `npm test` | no | ✅ |
-| `npm run db:check` | no | ✅ |
-| `npm run build` | no | ✅ |
-| `npm run db:migrate` | yes | 🔒 after merge / manual |
-| `npm run db:verify` | yes | 🔒 |
-| `npm run db:embeds` | yes | 🔒 |
-| `npm run smoke` | yes | 🔒 |
+| <img src="docs/screenshots/user-dashboard.png" alt="User portal dashboard" /> <br> **User portal** — 7 destinations | <img src="docs/screenshots/officer-queue.png" alt="Officer work queue" /> <br> **Officer portal** — underwriting & sanction | <img src="docs/screenshots/admin-users.png" alt="Admin user management" /> <br> **Admin portal** — users, products, audit |
 
-CI (`.github/workflows/ci.yml`) runs the four offline checks per PR.
-`.github/workflows/ci-live.yml` runs the database-backed ones after merge to
-`main`, and on demand from the Actions tab. The live workflow reads these
-repository secrets:
+---
 
-```
-DATABASE_URL               pooled connection string, port 6543
-NEXT_PUBLIC_SUPABASE_URL   https://<ref>.supabase.co   (no /rest/v1)
-NEXT_PUBLIC_SUPABASE_ANON_KEY
-SUPABASE_SERVICE_ROLE_KEY
-```
+## Table of contents
 
-Add them under **Settings → Secrets and variables → Actions**. Point
-`DATABASE_URL` at a **dedicated CI project**, not production — the seed
-truncates application tables.
+- [Quick start](#quick-start)
+- [Demo accounts](#demo-accounts)
+- [The three portals](#the-three-portals)
+- [Interest maths](#interest-maths)
+- [Realtime](#realtime)
+- [Security](#security)
+- [Third-party integrations](#third-party-integrations)
+- [Resolved design questions](#resolved-design-questions)
+- [Team workflow](#team-workflow)
+- [Deploying](#deploying)
+- [Project structure](#project-structure)
+- [Scripts](#scripts)
+- [What's built, what's next](#whats-built-whats-next)
+- [Screenshots: where they go](#screenshots-where-they-go)
 
 ---
 
@@ -69,9 +60,9 @@ cp .env.example .env     # then paste your Supabase keys
 ```
 
 `NEXT_PUBLIC_SUPABASE_URL` must be the **bare project URL**
-(`https://<ref>.supabase.co`) with no `/rest/v1` suffix — the client library
-appends that itself, and leaving it in produces `.../rest/v1/rest/v1/...`.
-The code normalises it either way, but a clean value avoids surprises.
+(`https://<ref>.supabase.co`) with no `/rest/v1` suffix — the client library appends
+that itself, and leaving it in produces `.../rest/v1/rest/v1/...`. The code
+normalises it either way, but a clean value avoids surprises.
 
 Then, for a **new** project, run the whole setup in one command:
 
@@ -79,30 +70,31 @@ Then, for a **new** project, run the whole setup in one command:
 npm run db:setup
 ```
 
-That runs the steps below in the only order that works, and stops at the first
-failure with an explanation. The ordering is not cosmetic: `profiles` has a
-foreign key to `auth.users`, so the demo accounts must exist **before** the
-seed runs. Doing it the other way round gives you a bare
-`violates foreign key constraint "profiles_id_fkey"` with nothing pointing at
-the cause. The seed now preflights this and names the missing accounts.
+That runs every step below in the only order that works, and stops at the first
+failure with an explanation. The ordering is not cosmetic: `profiles` has a foreign
+key to `auth.users`, so the demo accounts must exist **before** the seed runs. Doing
+it the other way round gives you a bare
+`violates foreign key constraint "profiles_id_fkey"` with nothing pointing at the
+cause. The seed now preflights this and names the missing accounts.
 
-### The individual steps
+<details>
+<summary><b>The individual steps</b> (expand)</summary>
 
-**1. Validate the SQL.** Runs the real PostgreSQL parser (libpg_query via
-`@supabase/pg-parser`) plus structural checks — no database needed:
+### 1 · Validate the SQL — no database needed
 
 ```bash
 npm run db:check
 ```
 
-This catches syntax errors, unbalanced dollar quoting, truncation, unsafe
-apostrophes and `INSERT` column/value arity mismatches.
+Runs the real PostgreSQL parser (libpg_query via `@supabase/pg-parser`) plus
+structural checks. Catches syntax errors, unbalanced dollar quoting, truncation,
+unsafe apostrophes and `INSERT` column/value arity mismatches.
 
-**2. Apply it.** Two options.
+### 2 · Apply it — two options
 
 **Option A — apply directly (recommended).** Add the connection string to `.env`:
 
-```bash
+```
 DATABASE_URL=postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:6543/postgres
 ```
 
@@ -110,57 +102,44 @@ DATABASE_URL=postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supaba
 npm run db:migrate
 ```
 
-This runs both files in order against the real database. It is the only way to
-catch **type** errors (`column "mode" is of type payment_mode but expression is
-of type text`), because those need a catalog to resolve against. You get the
-real message with the real line number.
+This runs both files in order against the real database. It is the only way to catch
+**type** errors (`column "mode" is of type payment_mode but expression is of type
+text`), because those need a catalog to resolve against. You get the real message
+with the real line number.
 
-**Option B — SQL Editor.** Supabase Dashboard → SQL Editor → paste and run, in
-order:
+**Option B — SQL Editor.** Supabase Dashboard → SQL Editor → paste and run, in order:
 
 | File | What it does |
 |---|---|
 | `supabase/migrations/0001_core_schema.sql` | Tables, enums, indexes, RLS policies, triggers, helpers |
 | `supabase/migrations/0002_seed.sql` | Demo data: 9 products, 10 applications, 4 loans, chats, tickets |
 
-`0001_core_schema.sql` is **idempotent** — every table, index, enum, function,
-policy and publication entry is created conditionally, so re-running it is a
-no-op rather than `ERROR: type "user_role" already exists`.
+`0001_core_schema.sql` is **idempotent** — every table, index, enum, function, policy
+and publication entry is created conditionally, so re-running it is a no-op rather
+than `ERROR: type "user_role" already exists`.
 
-`0002_seed.sql` **truncates** the application tables first, so it wipes any
-data you have created and reloads the demo set. Run it whenever you want a
-clean slate.
+`0002_seed.sql` **truncates** the application tables first, so it wipes any data you
+have created and reloads the demo set. Run it whenever you want a clean slate.
 
-**3. Create the auth users** (Supabase owns passwords, SQL seeds the profiles):
+### 3 · Create the auth users
 
 ```bash
 npm run db:users
 ```
 
-All demo accounts use the password **`demo1234`**.
+Supabase owns passwords, SQL seeds the profiles. All demo accounts use **`demo1234`**.
 
-This must run **before** the seed (step 2), not after: the `handle_new_user`
-trigger creates a `profiles` row for each signup, and the seed upserts on top of
-those rows. `db:setup` sequences it correctly.
+This must run **before** the seed (step 2), not after: the `handle_new_user` trigger
+creates a `profiles` row for each signup, and the seed upserts on top of those rows.
+`db:setup` sequences it correctly.
 
-**4. Run the app:**
+### 4 · Run the app
 
 ```bash
 npm run dev
 ```
 
----
-
-## Deploying
-
-Production deploys to Vercel. See **[DEPLOY.md](DEPLOY.md)** — it covers the
-environment variables, the Supabase redirect-URL allow-list (the step that
-breaks sign-in when missed), and a post-deploy checklist.
-
-The short version: import the repo on Vercel, set the four variables in the
-table, add your Vercel domain to Supabase's Site URL and Redirect URLs, then
-deploy. `npm run prebuild` fails the build with an explicit list if any
-required variable is missing, so a misconfigured deploy never silently ships.
+</details>
 
 ---
 
@@ -181,7 +160,7 @@ required variable is missing, so a misconfigured deploy never silently ships.
 
 ---
 
-## How the source document maps to the code
+## The three portals
 
 ### Entry point
 
@@ -191,24 +170,24 @@ own setup guide still tells you to create `middleware.ts`, so ignore that part o
 
 ### 1 · User portal (source doc line 8)
 
-| Document requirement | Route |
-|---|---|
-| Dashboard (7 destinations) | `app/user/dashboard` |
-| New Loan | `app/user/new-loan` + `[productId]` |
-| Application Status | `app/user/applications` + `[id]` |
-| Current Loan Status | `app/user/loans` + `[id]` |
-| EMI Calculator | `app/user/emi-calculator` |
-| CIBIL Score | `app/user/cibil` |
-| Payment History | `app/user/payments` |
-| Chatbot & Chat | `app/user/chat` + `[id]` |
+| Document requirement | Route | Screenshot |
+|---|---|---|
+| Dashboard (7 destinations) | `app/user/dashboard` | ![](docs/screenshots/user-dashboard.png) |
+| New Loan | `app/user/new-loan` + `[productId]` | ![](docs/screenshots/user-new-loan.png) |
+| Application Status | `app/user/applications` + `[id]` | ![](docs/screenshots/user-application-detail.png) |
+| Current Loan Status | `app/user/loans` + `[id]` | ![](docs/screenshots/user-loan-detail.png) |
+| EMI Calculator | `app/user/emi-calculator` | ![](docs/screenshots/user-emi-calculator.png) |
+| CIBIL Score | `app/user/cibil` | ![](docs/screenshots/user-cibil.png) |
+| Payment History | `app/user/payments` | ![](docs/screenshots/user-payments.png) |
+| Chatbot & Chat | `app/user/chat` + `[id]` | ![](docs/screenshots/chat.png) |
 
-### 2 · Loan categories (lines 10-23)
+### 2 · Loan categories (lines 10–23)
 
 Five secured (home, vehicle, gold, loan-against-property, loan-against-security) and
 four unsecured (personal, education, business/working-capital, credit-card), all seeded
 in `loan_products` with realistic Indian NBFC parameters.
 
-### 3 · Validation & verification (lines 26-102)
+### 3 · Validation & verification (lines 26–102)
 
 The multi-part checklist is **data-driven**. `document_requirements` holds one row per
 document with its `part` (A/B/C/D), label, file type and whether it applies to a given
@@ -219,28 +198,31 @@ database insert, not a code change.
 credit, liability). **Part B** filters by collateral — a gold loan sees purity and
 grammage; a home loan sees title deed and encumbrance certificate.
 
-### 4 · Applicant status (lines 107-131)
+> Screenshot: ![Document wizard](docs/screenshots/user-document-wizard.png)
 
-| State | Implementation |
-|---|---|
-| `PENDING` | `SUBMITTED` / `UNDER_REVIEW`, SLA date from `loan_products.sla_max_days`, assigned officer shown on hover |
-| `APPROVED` | Creates the loan, generates the amortisation schedule, disburses, issues an account number |
-| `FAILED` | `REJECTED` + a `cooling_periods` row blocking that **category** for 90 days |
-| `RESUBMISSION` | Officer names the exact documents; only those unlock. Everything else stays locked |
+### 4 · Applicant status (lines 107–131)
 
-### 5 · Current loan status (lines 138-170)
+| State | Implementation | Screenshot |
+|---|---|---|
+| `PENDING` | `SUBMITTED` / `UNDER_REVIEW`, SLA date from `loan_products.sla_max_days`, assigned officer shown on hover | ![](docs/screenshots/officer-queue.png) |
+| `APPROVED` | Creates the loan, generates the amortisation schedule, disburses, issues an account number | ![](docs/screenshots/user-loan-detail.png) |
+| `FAILED` | `REJECTED` + a `cooling_periods` row blocking that **category** for 90 days | ![](docs/screenshots/officer-decision.png) |
+| `RESUBMISSION` | Officer names the exact documents; only those unlock. Everything else stays locked | ![](docs/screenshots/user-resubmission.png) |
+
+### 5 · Current loan status (lines 138–170)
 
 Last payment · Next payment · Overdue · Call support · NOC. Prepayment re-runs the
 amortisation maths via `prepaymentImpact()` and flags the officer.
 
-### 6 · Payment history (lines 174-179)
+### 6 · Payment history (lines 174–179)
 
 Receipts, bounce charges, overdue flags, transaction status, CSV/statement download.
+See ![payment history](docs/screenshots/user-payments.png).
 
-### 7 · CIBIL score (lines 195-201)
+### 7 · CIBIL score (lines 195–201)
 
 `ID proof → validation → third-party API → our API → DB → dashboard`. Scores expire
-after 30 days and must be re-pulled. See "Third-party integrations" below.
+after 30 days and must be re-pulled. See [integrations](#third-party-integrations).
 
 ---
 
@@ -285,6 +267,8 @@ plus income, amount, tenure, credit score and collateral-cover checks. Each rule
 `PASS` / `WARN` / `FAIL` rather than a single opaque rejection, so officers see *which*
 check failed and by how much.
 
+> Screenshot: ![Underwriting scorecard](docs/screenshots/officer-scorecard.png)
+
 ---
 
 ## Realtime
@@ -302,7 +286,7 @@ document depend on push:
 | Customer chats → notify officer in EMP portal | 111 |
 | Officer replies → notify user in USER portal | 112 |
 | Officer marks an EMI overdue → notify user | 155 |
-| Chat Support, both directions | 110-112, 162 |
+| Chat Support, both directions | 110–112, 162 |
 | Notification bell count | throughout |
 
 Everything else — dashboards, the EMI calculator, application lists, payment history —
@@ -317,11 +301,8 @@ in the `supabase_realtime` publication: `notifications`, `applications`,
 
 ## Security
 
-Three portals over one database means **Row Level Security is the security model**, not
-an optional extra. Every table has RLS enabled and policies that scope reads to the
-owner, the assigned officer, or an admin.
-
-Two key types:
+Every table has RLS enabled and policies that scope reads to the owner, the assigned
+officer, or an admin.
 
 | Key | Where | RLS |
 |---|---|---|
@@ -386,6 +367,7 @@ lib/
 
 supabase/migrations/          # 0001 schema · 0002 seed
 proxy.ts                      # session refresh + role-based route guards
+docs/screenshots/             # README images (hero, per-feature, portal grid)
 ```
 
 ---
@@ -410,14 +392,110 @@ npm run db:types     # regenerate types from a live database
 npm run smoke        # render every route with a real session (needs dev server)
 ```
 
-`npm run build` runs `prebuild` first, which fails with an explicit list of any
-missing Supabase environment variables. This is deliberate: `NEXT_PUBLIC_*`
-values are inlined into the bundle at build time, so without the guard a
-missing variable ships a broken deployment instead of a failed build.
+`npm run build` runs `prebuild` first, which fails with an explicit list of any missing
+Supabase environment variables. This is deliberate: `NEXT_PUBLIC_*` values are inlined
+into the bundle at build time, so without the guard a missing variable ships a broken
+deployment instead of a failed build.
+
+### Automated checks
+
+| Command | Needs a database | Runs on every PR |
+|---|---|---|
+| `npm run typecheck` | no | ✅ |
+| `npm run test` | no | ✅ |
+| `npm run db:check` | no | ✅ |
+| `npm run build` | no | ✅ |
+| `npm run db:migrate` | yes | 🔒 after merge / manual |
+| `npm run db:verify` | yes | 🔒 |
+| `npm run db:embeds` | yes | 🔒 |
+| `npm run smoke` | yes | 🔒 |
+
+CI (`.github/workflows/ci.yml`) runs the four offline checks per PR.
+`.github/workflows/ci-live.yml` runs the database-backed ones after merge to `main`,
+and on demand from the Actions tab.
 
 ---
 
-## What's built and what's next
+## Team workflow
+
+This is the `main` repository — treat `main` as protected and land changes only through
+pull requests. Full detail in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+```bash
+git checkout main && git pull
+git checkout -b feat/short-description
+# ... work, running the checks below locally ...
+git commit -m "feat(scope): what changed"
+git push -u origin feat/short-description
+# open a PR against main
+```
+
+| Rule | Why |
+|---|---|
+| Never push directly to `main` | CI runs on every PR; direct pushes skip it |
+| Two approvals, one from a non-author | Money maths and RLS need a second pair of eyes |
+| `npm run smoke` before opening a PR | `next build` cannot catch session-scoped render errors |
+| Add a migration rather than editing a shipped one | `0001` is idempotent, so re-running it is safe; already-applied migrations are not replayed by others' databases |
+
+Repository secrets used by the live workflow:
+
+```
+DATABASE_URL               pooled connection string, port 6543
+NEXT_PUBLIC_SUPABASE_URL   https://<ref>.supabase.co   (no /rest/v1)
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY
+```
+
+Add them under **Settings → Secrets and variables → Actions**. Point `DATABASE_URL` at a
+**dedicated CI project**, not production — the seed truncates application tables.
+
+---
+
+## Deploying
+
+Production deploys to Vercel. See **[DEPLOY.md](DEPLOY.md)** — environment variables,
+the Supabase redirect-URL allow-list (the step that breaks sign-in when missed), and a
+post-deploy checklist.
+
+Short version: import the repo on Vercel, set the four variables above, add your Vercel
+domain to Supabase's Site URL and Redirect URLs, then deploy. `npm run prebuild` fails
+the build with an explicit list if any required variable is missing, so a misconfigured
+deploy never silently ships.
+
+---
+
+## Screenshots: where they go
+
+Every image lives in **`docs/screenshots/`** and is referenced by a relative path. Keep
+them out of the repo root — they bloat the diff and make `git status` unreadable.
+
+| Where | File | Why there |
+|---|---|---|
+| Right under the badges | `hero-portals.png` | The first thing anyone sees. One wide 3-up montage of all three portals, ≤ 1200px wide, so it doesn't dominate the fold |
+| In "Why this repo is shaped the way it is" | `user-dashboard.png`, `officer-queue.png`, `admin-users.png` | The 3-column grid — your answer to "is it actually three apps?" |
+| The User-portal route table | `user-*.png`, one per destination | Maps each spec requirement to a visual, so a reviewer can verify the doc was implemented |
+| The applicant-status table | `officer-queue.png`, `user-loan-detail.png`, `officer-decision.png`, `user-resubmission.png` | Proves the four states are real, not just enum values |
+| "Interest maths" | `officer-scorecard.png`, `user-emi-calculator.png` | The two places money is shown — worth an explicit callout |
+| "Security" / "Realtime" | `chat.png`, `admin-audit-log.png` | Live chat and audit log are the least believable features without proof |
+
+Rules that keep the README from rotting:
+
+- **Full paths everywhere** — `/user/dashboard`, not `user/dashboard`. The docs never
+  show the `(user)` badge that the app itself renders; a screenshot that contradicts
+  the table above it reads as a bug.
+- **Blur or crop real PII** before committing. The seed only has `demo.in` accounts,
+  which is fine; any future screen pull is not.
+- **Commit deliberately.** CI builds against the DB, so a rename that breaks an image
+  link shows up as a red build — which is exactly the signal you want.
+- **Export at 2× and compress.** GitHub renders large images lazily; 8 × full-page
+  screenshots at 2× is several MB of scroll-jank for no added detail.
+- Add images with `docs/screenshots/NAME.png`, then reference
+  `![alt text](docs/screenshots/NAME.png)`. If a screenshot is genuinely optional or
+  not yet captured, comment the line out rather than committing a broken link.
+
+---
+
+## What's built, what's next
 
 **Done:** full schema with RLS, seed data covering every state, auth and role routing,
 all three portals, the data-driven multi-part wizard, live underwriting scorecard,
@@ -426,6 +504,6 @@ tracking, CIBIL with expiry, live chat, tickets, NOC flow, EMI calculator.
 
 **Not yet:** payment gateway integration, real bureau calls, PDF generation for e-Bill
 and NOC, file upload to Supabase Storage, the chatbot (the source doc says
-*"based on timing we create enhance one"*), and a scheduled job for overdue detection
-and cooling-period expiry — that last one belongs in a Supabase Edge Function triggered
-by `pg_cron`, which Supabase runs for you.
+*"based on timing we create enhance one"*), and a scheduled job for overdue detection and
+cooling-period expiry — that last one belongs in a Supabase Edge Function triggered by
+`pg_cron`, which Supabase runs for you.
