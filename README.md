@@ -24,6 +24,32 @@ and reporting.**
 > **Run it yourself** — clone, paste four Supabase keys, run `npm run db:setup`.
 > Demo accounts are seeded; the password for all of them is `demo1234`.
 
+## At a glance
+
+| | |
+|---|---|
+| **Scale** | 30 routes across 3 role-gated portals · ~18,700 lines across 126 files |
+| **Data model** | 25 tables · 20 enums · 39 RLS policies, enforced on every table |
+| **Correctness** | 60 unit assertions over the finance and risk logic |
+| **Verification** | 11 commands — SQL parsed by the real PostgreSQL parser, 61 seed invariants, 17 PostgREST embed checks, 30 routes rendered under live sessions |
+| **CI** | 4 independently required status checks; database jobs gated behind secrets so a fork PR can never read `service_role` |
+| **Domain** | Reducing-balance EMI · FOIR underwriting · two-tier sanctioning authority · DPDP-aligned PII handling |
+
+### The parts worth reading
+
+- **[`lib/finance/emi.ts`](lib/finance/emi.ts)** — amortisation where the final
+  instalment absorbs accumulated rounding drift, so the principal column sums back to
+  the original amount exactly. Covered by tests including the edge cases. An EMI that
+  is off by a few paise is a support ticket forever.
+- **[`supabase/migrations/0001_core_schema.sql`](supabase/migrations/0001_core_schema.sql)**
+  — authorisation is enforced in Postgres, not trusted to application code. A leaked
+  anon key exposes nothing, and deleting a user still cascades correctly.
+- **[`scripts/`](scripts/)** — what makes the above checkable: the real PostgreSQL
+  parser instead of a regex, assertions against live data instead of hopeful defaults,
+  and a setup command that fails with the fix rather than a bare foreign-key error.
+- **[`proxy.ts`](proxy.ts) + [`lib/portal.tsx`](lib/portal.tsx)** — role resolution
+  funnels through one typed choke point, so a page cannot accidentally skip the check.
+
 ## Why this repo is shaped the way it is
 
 Three portals, one database — so **Row Level Security is the security model**, not an
@@ -44,6 +70,7 @@ The portal gallery is further down — jump to [Screenshots](#screenshots).
 
 ## Table of contents
 
+- [At a glance](#at-a-glance)
 - [Quick start](#quick-start)
 - [Demo accounts](#demo-accounts)
 - [The three portals](#the-three-portals)

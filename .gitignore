@@ -69,3 +69,8 @@ Thumbs.db
 
 # logs
 *.log
+
+# Scratch files used while investigating. These live at the repo root and are
+# easy to `git add -A` by accident — one of them was nearly committed.
+.tmp-*
+.tmp
