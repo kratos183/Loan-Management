@@ -11,7 +11,8 @@
 [![CI](https://img.shields.io/badge/CI-typecheck%20%C2%B7%20test%20%C2%B7%20build%20%C2%B7%20db%3Acheck-8A2BE2?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
 [![PRs](https://img.shields.io/badge/PRs-2%20approvals%20required-8957E5?style=flat-square)](CONTRIBUTING.md)
 
-
+<!-- HERO: uncomment once docs/screenshots/hero-portals.png exists -->
+<!-- <img width="100%" src="docs/screenshots/hero-portals.png" alt="User, Officer and Admin portals side by side" /> -->
 
 ---
 
@@ -27,9 +28,12 @@ usually get wrong on Next.js + Supabase are documented here before they bite you
 > **Try it in 5 minutes** — clone, paste four Supabase keys, run `npm run db:setup`.
 > Demo accounts are seeded; password for all of them is `demo1234`.
 
-|  |  |  |
-|---|---|---|
-| <img src="docs/screenshots/user-dashboard.png" alt="User portal dashboard" /> <br> **User portal** — 7 destinations | <img src="docs/screenshots/officer-queue.png" alt="Officer work queue" /> <br> **Officer portal** — underwriting & sanction | <img src="docs/screenshots/admin-users.png" alt="Admin user management" /> <br> **Admin portal** — users, products, audit |
+<p align="center">
+  <b>User portal</b> — 7 destinations &nbsp;·&nbsp; <b>Officer portal</b> — underwriting
+  &amp; sanction &nbsp;·&nbsp; <b>Admin portal</b> — users, products, audit
+</p>
+
+See [Screenshots](#screenshots) for the portal gallery.
 
 ---
 
@@ -48,7 +52,7 @@ usually get wrong on Next.js + Supabase are documented here before they bite you
 - [Project structure](#project-structure)
 - [Scripts](#scripts)
 - [What's built, what's next](#whats-built-whats-next)
-- [Screenshots: where they go](#screenshots-where-they-go)
+- [Screenshots](#screenshots)
 
 ---
 
@@ -170,16 +174,16 @@ own setup guide still tells you to create `middleware.ts`, so ignore that part o
 
 ### 1 · User portal (source doc line 8)
 
-| Document requirement | Route | Screenshot |
-|---|---|---|
-| Dashboard (7 destinations) | `app/user/dashboard` | ![](docs/screenshots/user-dashboard.png) |
-| New Loan | `app/user/new-loan` + `[productId]` | ![](docs/screenshots/user-new-loan.png) |
-| Application Status | `app/user/applications` + `[id]` | ![](docs/screenshots/user-application-detail.png) |
-| Current Loan Status | `app/user/loans` + `[id]` | ![](docs/screenshots/user-loan-detail.png) |
-| EMI Calculator | `app/user/emi-calculator` | ![](docs/screenshots/user-emi-calculator.png) |
-| CIBIL Score | `app/user/cibil` | ![](docs/screenshots/user-cibil.png) |
-| Payment History | `app/user/payments` | ![](docs/screenshots/user-payments.png) |
-| Chatbot & Chat | `app/user/chat` + `[id]` | ![](docs/screenshots/chat.png) |
+| Document requirement | Route |
+|---|---|
+| Dashboard (7 destinations) | `app/user/dashboard` |
+| New Loan | `app/user/new-loan` + `[productId]` |
+| Application Status | `app/user/applications` + `[id]` |
+| Current Loan Status | `app/user/loans` + `[id]` |
+| EMI Calculator | `app/user/emi-calculator` |
+| CIBIL Score | `app/user/cibil` |
+| Payment History | `app/user/payments` |
+| Chatbot & Chat | `app/user/chat` + `[id]` |
 
 ### 2 · Loan categories (lines 10–23)
 
@@ -198,16 +202,14 @@ database insert, not a code change.
 credit, liability). **Part B** filters by collateral — a gold loan sees purity and
 grammage; a home loan sees title deed and encumbrance certificate.
 
-> Screenshot: ![Document wizard](docs/screenshots/user-document-wizard.png)
-
 ### 4 · Applicant status (lines 107–131)
 
-| State | Implementation | Screenshot |
-|---|---|---|
-| `PENDING` | `SUBMITTED` / `UNDER_REVIEW`, SLA date from `loan_products.sla_max_days`, assigned officer shown on hover | ![](docs/screenshots/officer-queue.png) |
-| `APPROVED` | Creates the loan, generates the amortisation schedule, disburses, issues an account number | ![](docs/screenshots/user-loan-detail.png) |
-| `FAILED` | `REJECTED` + a `cooling_periods` row blocking that **category** for 90 days | ![](docs/screenshots/officer-decision.png) |
-| `RESUBMISSION` | Officer names the exact documents; only those unlock. Everything else stays locked | ![](docs/screenshots/user-resubmission.png) |
+| State | Implementation |
+|---|---|
+| `PENDING` | `SUBMITTED` / `UNDER_REVIEW`, SLA date from `loan_products.sla_max_days`, assigned officer shown on hover |
+| `APPROVED` | Creates the loan, generates the amortisation schedule, disburses, issues an account number |
+| `FAILED` | `REJECTED` + a `cooling_periods` row blocking that **category** for 90 days |
+| `RESUBMISSION` | Officer names the exact documents; only those unlock. Everything else stays locked |
 
 ### 5 · Current loan status (lines 138–170)
 
@@ -217,7 +219,6 @@ amortisation maths via `prepaymentImpact()` and flags the officer.
 ### 6 · Payment history (lines 174–179)
 
 Receipts, bounce charges, overdue flags, transaction status, CSV/statement download.
-See ![payment history](docs/screenshots/user-payments.png).
 
 ### 7 · CIBIL score (lines 195–201)
 
@@ -266,8 +267,6 @@ or reduce EMI (tenure unchanged), and reports the interest saved either way.
 plus income, amount, tenure, credit score and collateral-cover checks. Each rule returns
 `PASS` / `WARN` / `FAIL` rather than a single opaque rejection, so officers see *which*
 check failed and by how much.
-
-> Screenshot: ![Underwriting scorecard](docs/screenshots/officer-scorecard.png)
 
 ---
 
@@ -464,34 +463,114 @@ deploy never silently ships.
 
 ---
 
-## Screenshots: where they go
+## Screenshots
 
-Every image lives in **`docs/screenshots/`** and is referenced by a relative path. Keep
-them out of the repo root — they bloat the diff and make `git status` unreadable.
+One gallery, one place. Nothing above references an image, so this section can grow
+without leaving broken links in the spec tables.
 
-| Where | File | Why there |
+Add files to `docs/screenshots/` and uncomment the blocks below. Every `<img>` line is
+commented **now**, on purpose — a README that renders `alt` text where a picture should
+be looks broken to everyone who lands on the repo.
+
+### Hero (under the badges)
+
+A wide 3-up montage, ≤ 1200px so it doesn't swallow the fold.
+
+```html
+<!--
+<img width="100%" src="docs/screenshots/hero-portals.png" alt="User, Officer and Admin portals side by side" />
+-->
+```
+
+### The three portals
+
+Copy this block **above** the "Try it in 5 minutes" callout to replace the placeholder
+line there.
+
+```html
+|  |  |  |
 |---|---|---|
-| Right under the badges | `hero-portals.png` | The first thing anyone sees. One wide 3-up montage of all three portals, ≤ 1200px wide, so it doesn't dominate the fold |
-| In "Why this repo is shaped the way it is" | `user-dashboard.png`, `officer-queue.png`, `admin-users.png` | The 3-column grid — your answer to "is it actually three apps?" |
-| The User-portal route table | `user-*.png`, one per destination | Maps each spec requirement to a visual, so a reviewer can verify the doc was implemented |
-| The applicant-status table | `officer-queue.png`, `user-loan-detail.png`, `officer-decision.png`, `user-resubmission.png` | Proves the four states are real, not just enum values |
-| "Interest maths" | `officer-scorecard.png`, `user-emi-calculator.png` | The two places money is shown — worth an explicit callout |
-| "Security" / "Realtime" | `chat.png`, `admin-audit-log.png` | Live chat and audit log are the least believable features without proof |
+| <img src="docs/screenshots/user-dashboard.png" alt="User portal dashboard" width="100%" /> <br> **User portal** — 7 destinations | <img src="docs/screenshots/officer-queue.png" alt="Officer work queue" width="100%" /> <br> **Officer portal** — underwriting & sanction | <img src="docs/screenshots/admin-users.png" alt="Admin user management" width="100%" /> <br> **Admin portal** — users, products, audit |
+```
 
-Rules that keep the README from rotting:
+### Gallery
 
-- **Full paths everywhere** — `/user/dashboard`, not `user/dashboard`. The docs never
-  show the `(user)` badge that the app itself renders; a screenshot that contradicts
-  the table above it reads as a bug.
-- **Blur or crop real PII** before committing. The seed only has `demo.in` accounts,
-  which is fine; any future screen pull is not.
-- **Commit deliberately.** CI builds against the DB, so a rename that breaks an image
-  link shows up as a red build — which is exactly the signal you want.
-- **Export at 2× and compress.** GitHub renders large images lazily; 8 × full-page
-  screenshots at 2× is several MB of scroll-jank for no added detail.
-- Add images with `docs/screenshots/NAME.png`, then reference
-  `![alt text](docs/screenshots/NAME.png)`. If a screenshot is genuinely optional or
-  not yet captured, comment the line out rather than committing a broken link.
+```html
+<details>
+<summary><b>User portal</b></summary>
+
+![Dashboard](docs/screenshots/user-dashboard.png)
+![New loan](docs/screenshots/user-new-loan.png)
+![Document wizard](docs/screenshots/user-document-wizard.png)
+![Application detail](docs/screenshots/user-application-detail.png)
+![Resubmission](docs/screenshots/user-resubmission.png)
+![Loan detail](docs/screenshots/user-loan-detail.png)
+![EMI calculator](docs/screenshots/user-emi-calculator.png)
+![CIBIL score](docs/screenshots/user-cibil.png)
+![Payments](docs/screenshots/user-payments.png)
+
+</details>
+
+<details>
+<summary><b>Officer portal</b></summary>
+
+![Work queue](docs/screenshots/officer-queue.png)
+![Underwriting scorecard](docs/screenshots/officer-scorecard.png)
+![Decision panel](docs/screenshots/officer-decision.png)
+
+</details>
+
+<details>
+<summary><b>Admin portal</b></summary>
+
+![User management](docs/screenshots/admin-users.png)
+![Audit log](docs/screenshots/admin-audit-log.png)
+
+</details>
+
+<details>
+<summary><b>Chat (Realtime)</b></summary>
+
+![Live chat](docs/screenshots/chat.png)
+
+</details>
+```
+
+`<details>` keeps the README short while the pictures stay one click away — a good
+trade while the README still has fifteen feature sections.
+
+### Capture checklist
+
+| # | File | Where it earns its place |
+|---|---|---|
+| 1 | `hero-portals.png` | Under the badges — the fold |
+| 2 | `user-dashboard.png` | 3-column grid + gallery |
+| 3 | `officer-queue.png` | 3-column grid + gallery |
+| 4 | `admin-users.png` | 3-column grid + gallery |
+| 5 | `user-document-wizard.png` | Proves the data-driven checklist claim |
+| 6 | `officer-scorecard.png` | The FOIR `PASS/WARN/FAIL` panel |
+| 7 | `officer-decision.png` | Approve / reject / resubmit |
+| 8 | `user-loan-detail.png` | Amortisation + overdue |
+| 9 | `user-emi-calculator.png` | Where the maths is visible to a user |
+| 10 | `chat.png` | Realtime, least believable without proof |
+| 11 | `admin-audit-log.png` | Audit trail is an admin-portal claim |
+
+Optional: `user-resubmission.png`, `user-cibil.png`, `user-payments.png`,
+`user-new-loan.png`, `user-application-detail.png`.
+
+### Rules that keep this from rotting
+
+- **Full paths in every screenshot** — `/user/dashboard`, not `user/dashboard`. Next.js
+  route groups can render a `(user)` badge that the docs table above doesn't show; a
+  screenshot that contradicts the table reads as a bug.
+- **Blur or crop real PII before committing.** The `demo.in` seed accounts are fine;
+  any future screen pull is not.
+- **Export at 2× and compress.** Fifteen full-page PNGs at 2× is several MB of
+  scroll-jank for no added detail.
+- **Filename = the caption.** `user-dashboard.png` → "Dashboard". Keeps the gallery
+  alphabetical-but-meaningful and makes a rename a one-line edit.
+- **Don't inline them into the spec tables.** When a screenshot moves, only this
+  section breaks — not seven places in the document.
 
 ---
 
