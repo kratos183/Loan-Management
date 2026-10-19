@@ -7,6 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%C2%B7%20Auth%20%C2%B7%20Realtime%20%C2%B7%20Storage-3ECF8E?style=flat-square&logo=supabase&logoColor=black)](https://supabase.com)
+[![Vercel](https://img.shields.io/badge/Vercel-deploy%20ready-000?style=flat-square&logo=vercel&logoColor=white)](DEPLOY.md)
 [![CI](https://img.shields.io/badge/CI-typecheck%20%C2%B7%20test%20%C2%B7%20build%20%C2%B7%20db%3Acheck-8A2BE2?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
 [![PRs](https://img.shields.io/badge/PRs-2%20approvals%20required-8957E5?style=flat-square)](CONTRIBUTING.md)
 
@@ -32,9 +33,7 @@ usually get wrong on Next.js + Supabase are documented here before they bite you
   &amp; sanction &nbsp;·&nbsp; <b>Admin portal</b> — users, products, audit
 </p>
 
-See [Screenshots](#screenshots) for the portal gallery, and
-[`docs/screenshots/README.md`](docs/screenshots/README.md) for the exact URL and
-account behind each image.
+See [Screenshots](#screenshots) for the portal gallery.
 
 ---
 
@@ -116,7 +115,7 @@ with the real line number.
 
 | File | What it does |
 |---|---|
-| `supabase/migrations/0001_core_schema.sql` | 25 tables, 20 enums, 20 indexes, 39 RLS policies, 2 triggers, helper functions |
+| `supabase/migrations/0001_core_schema.sql` | Tables, enums, indexes, RLS policies, triggers, helpers |
 | `supabase/migrations/0002_seed.sql` | Demo data: 9 products, 10 demo users, 12 applications, 5 loans, 3 chats, 3 tickets |
 
 `0001_core_schema.sql` is **idempotent** — every table, index, enum, function, policy
@@ -185,7 +184,6 @@ own setup guide still tells you to create `middleware.ts`, so ignore that part o
 | CIBIL Score | `app/user/cibil` |
 | Payment History | `app/user/payments` |
 | Chatbot & Chat | `app/user/chat` + `[id]` |
-| Raise a Ticket | `app/user/tickets` |
 
 ### 2 · Loan categories (lines 10–23)
 
@@ -271,8 +269,6 @@ plus income, amount, tenure, credit score and collateral-cover checks. Each rule
 `PASS` / `WARN` / `FAIL` rather than a single opaque rejection, so officers see *which*
 check failed and by how much.
 
-`npm test` covers both modules with 60 assertions, including the rounding edge cases.
-
 ---
 
 ## Realtime
@@ -305,8 +301,8 @@ in the `supabase_realtime` publication: `notifications`, `applications`,
 
 ## Security
 
-Every one of the 25 tables has RLS enabled, with 39 policies that scope reads to the
-owner, the assigned officer, or an admin.
+Every table has RLS enabled and policies that scope reads to the owner, the assigned
+officer, or an admin.
 
 | Key | Where | RLS |
 |---|---|---|
@@ -350,7 +346,7 @@ in a prototype. Payments, email and storage can be.
 app/
   page.tsx                    # marketing landing
   login/ signup/              # auth (split-screen layout)
-  user/                       # 9 dashboard destinations
+  user/                       # 7 dashboard destinations
   employee/                   # work queue, review screen, loans, NOC, chat, tickets
   admin/                      # users, products, staff, reports, audit
 
@@ -383,17 +379,17 @@ npm run dev         # dev server
 npm run build       # production build
 npm run typecheck   # tsc --noEmit
 npm run test        # finance test suite
-npm run db:setup    # FIRST-TIME SETUP: auth users -> schema+seed -> verify (needs DATABASE_URL)
-npm run db:check    # validate SQL (real parser, no DB needed)
-npm run db:migrate  # apply SQL to the real database (needs DATABASE_URL)
-npm run db:verify   # assert seed data integrity (needs DATABASE_URL)
-npm run db:embeds   # validate every PostgREST embed (needs a database)
+npm run db:setup     # FIRST-TIME SETUP: auth users -> schema+seed -> verify (needs DATABASE_URL)
+npm run db:check     # validate SQL (real parser, no DB needed)
+npm run db:migrate   # apply SQL to the real database (needs DATABASE_URL)
+npm run db:verify    # assert seed data integrity (needs DATABASE_URL)
+npm run db:embeds    # validate every PostgREST embed (needs a database)
 npm run db:relations # list FKs, check every embed hint resolves
-npm run db:users    # create demo auth users
+npm run db:users     # create demo auth users
 npm run db:users:reset  # reset all demo passwords
-npm run db:diagnose # test sign-in, list auth users and profiles
-npm run db:types    # regenerate types from a live database
-npm run smoke       # render every route with a real session (needs dev server)
+npm run db:diagnose  # test sign-in, list auth users and profiles
+npm run db:types     # regenerate types from a live database
+npm run smoke        # render every route with a real session (needs dev server)
 ```
 
 `npm run build` runs `prebuild` first, which fails with an explicit list of any missing
@@ -473,12 +469,14 @@ deploy never silently ships.
 One gallery, one place. Nothing above references an image, so this section can grow
 without leaving broken links in the spec tables.
 
-**Every `<img>` line below is commented out on purpose** — a README that renders `alt`
-text where a picture should be looks broken to everyone who lands on the repo. Uncomment
-a block once the file exists in `docs/screenshots/`.
+Add files to `docs/screenshots/` and uncomment the blocks below. Every `<img>` line is
+commented **now**, on purpose — a README that renders `alt` text where a picture should
+be looks broken to everyone who lands on the repo.
 
-[`docs/screenshots/README.md`](docs/screenshots/README.md) has the full capture
-checklist: the exact URL, the account to sign in as, and the filename for each image.
+[`docs/screenshots/README.md`](docs/screenshots/README.md) is the capture guide: the
+exact URL, the account to sign in as, and the filename for every image below. Paths are
+relative to the repository root, so a file dropped in as `user-dashboard.png` is already
+at the path this README links to — nothing else needs editing.
 
 ### Hero (under the badges)
 
