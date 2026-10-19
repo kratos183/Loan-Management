@@ -11,7 +11,7 @@
 [![CI](https://img.shields.io/badge/CI-typecheck%20%C2%B7%20test%20%C2%B7%20build%20%C2%B7%20db%3Acheck-8A2BE2?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
 [![PRs](https://img.shields.io/badge/PRs-2%20approvals%20required-8957E5?style=flat-square)](CONTRIBUTING.md)
 
-<img width="100%" src="docs/screenshots/hero-portals.png" alt="User, Officer and Admin portals side by side" />
+
 
 ---
 
