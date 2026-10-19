@@ -1,0 +1,6 @@
+# Keeps this folder in git while it is empty. Delete this file once the first
+# screenshot is committed — the folder exists because of its contents.
+#
+# Every image here is referenced from the root README.md by a path relative to
+# the repository root, e.g. docs/screenshots/user-dashboard.png, so a file
+# dropped in with the right name is already at the path it is linked from.

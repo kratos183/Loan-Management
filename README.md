@@ -1,20 +1,28 @@
-# 💳 SafarLoan — Loan Management Platform
-
-**A three-portal digital lending platform built from `USER-OMA.txt` — applicants apply and service loans, loan officers verify and sanction, admins manage users, products and reporting.**
-
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org)
-[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=20232A)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%C2%B7%20Auth%20%C2%B7%20Realtime%20%C2%B7%20Storage-3ECF8E?style=flat-square&logo=supabase&logoColor=black)](https://supabase.com)
-[![Vercel](https://img.shields.io/badge/Vercel-deploy%20ready-000?style=flat-square&logo=vercel&logoColor=white)](DEPLOY.md)
-[![CI](https://img.shields.io/badge/CI-typecheck%20%C2%B7%20test%20%C2%B7%20build%20%C2%B7%20db%3Acheck-8A2BE2?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
-[![PRs](https://img.shields.io/badge/PRs-2%20approvals%20required-8957E5?style=flat-square)](CONTRIBUTING.md)
-
-<!-- HERO: uncomment once docs/screenshots/hero-portals.png exists -->
-<!-- <img width="100%" src="docs/screenshots/hero-portals.png" alt="User, Officer and Admin portals side by side" /> -->
+# 💳 SafarLoan — Full-Stack Loan Management Platform
 
 ---
+
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%C2%B7%20Auth%20%C2%B7%20Realtime-3ECF8E?style=flat-square&logo=supabase&logoColor=black)](https://supabase.com)
+[![Vercel](https://img.shields.io/badge/Vercel-DEPLOYED-000000?style=flat-square&logo=vercel&logoColor=white)](https://loanmanagement-omega.vercel.app/)
+
+[![CI](https://img.shields.io/badge/CI-typecheck%20%C2%B7%20test%20%C2%B7%20build%20%C2%B7%20db%3Acheck-8A2BE2?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
+[![PRs](https://img.shields.io/badge/PRs-2%20approvals%20required-8957E5?style=flat-square)](CONTRIBUTING.md)
+[![Tests](https://img.shields.io/badge/tests-60%20passing-22C55E?style=flat-square)](tests/finance.test.ts)
+
+---
+
+**A three-portal digital lending platform built from `USER-OMA.txt` — applicants apply
+and service loans, loan officers verify and sanction, admins manage users, products
+and reporting.**
+
+> **Live demo** — <https://loanmanagement-omega.vercel.app/>
+>
+> **Run it yourself** — clone, paste four Supabase keys, run `npm run db:setup`.
+> Demo accounts are seeded; the password for all of them is `demo1234`.
 
 ## Why this repo is shaped the way it is
 
@@ -25,15 +33,12 @@ usually get wrong on Next.js + Supabase are documented here before they bite you
 `proxy.ts` instead of the deprecated `middleware.ts`, and a seed that has to run
 *after* auth users, not before.
 
-> **Try it in 5 minutes** — clone, paste four Supabase keys, run `npm run db:setup`.
-> Demo accounts are seeded; password for all of them is `demo1234`.
-
 <p align="center">
   <b>User portal</b> — 9 destinations &nbsp;·&nbsp; <b>Officer portal</b> — underwriting
   &amp; sanction &nbsp;·&nbsp; <b>Admin portal</b> — users, products, audit
 </p>
 
-See [Screenshots](#screenshots) for the portal gallery.
+The portal gallery is further down — jump to [Screenshots](#screenshots).
 
 ---
 
@@ -466,119 +471,97 @@ deploy never silently ships.
 
 ## Screenshots
 
-One gallery, one place. Nothing above references an image, so this section can grow
-without leaving broken links in the spec tables.
-
-Add files to `docs/screenshots/` and uncomment the blocks below. Every `<img>` line is
-commented **now**, on purpose — a README that renders `alt` text where a picture should
-be looks broken to everyone who lands on the repo.
-
-[`docs/screenshots/README.md`](docs/screenshots/README.md) is the capture guide: the
-exact URL, the account to sign in as, and the filename for every image below. Paths are
-relative to the repository root, so a file dropped in as `user-dashboard.png` is already
-at the path this README links to — nothing else needs editing.
-
-### Hero (under the badges)
-
-A wide 3-up montage, ≤ 1200px so it doesn't swallow the fold.
-
-```html
-<!--
-<img width="100%" src="docs/screenshots/hero-portals.png" alt="User, Officer and Admin portals side by side" />
--->
-```
+Six images, chosen because each one proves a claim the text above makes. The rest are
+optional and listed at the [end of this section](#capturing-the-rest).
 
 ### The three portals
 
-Copy this block **above** the "Try it in 5 minutes" callout to replace the placeholder
-line there.
+The whole product in three frames — borrowers, officers, admins, one database.
 
-```html
-|  |  |  |
+<table>
+<tr>
+<td width="33%" align="center"><img src="docs/screenshots/user-dashboard.png" alt="User portal dashboard" /></td>
+<td width="33%" align="center"><img src="docs/screenshots/officer-queue.png" alt="Officer work queue" /></td>
+<td width="33%" align="center"><img src="docs/screenshots/admin-users.png" alt="Admin user management" /></td>
+</tr>
+<tr>
+<td align="center"><b>User portal</b><br /><sub>9 destinations</sub></td>
+<td align="center"><b>Officer portal</b><br /><sub>underwriting &amp; sanction</sub></td>
+<td align="center"><b>Admin portal</b><br /><sub>users, products, audit</sub></td>
+</tr>
+</table>
+
+### The multi-part wizard
+
+Five parts — loan details, identity & income, collateral, consent, submit — driven by
+`document_requirements`: one row per document with its part, label, file type and the
+collateral types it applies to. Adding a document is a database insert, not a code
+change. The live estimate on the right is the same EMI maths the loans run on.
+
+<img src="docs/screenshots/user-document-wizard.png" alt="Five-step loan wizard with a live EMI estimate" />
+
+### Realtime
+
+Postgres is the source of truth; the WebSocket is only delivery. These two frames are
+the same conversation seen from each portal — the one claim a static screenshot proves
+least, which is why it is worth two images rather than one.
+
+<table>
+<tr>
+<td width="50%" align="center"><img src="docs/screenshots/user-chat.png" alt="Conversation as the borrower sees it" /></td>
+<td width="50%" align="center"><img src="docs/screenshots/officer-chat.png" alt="The same conversation in the officer portal, pushed live" /></td>
+</tr>
+<tr>
+<td align="center"><b>Borrower view</b></td>
+<td align="center"><b>Officer view</b> — pushed without a refresh</td>
+</tr>
+</table>
+
+### Realtime
+
+### Capturing the rest
+
+Live at **<https://loanmanagement-omega.vercel.app/>** — sign in as `rahul@demo.in`,
+`officer@demo.in` or `admin@demo.in`, password `demo1234`. Paths below are relative to
+the repository root, so a file dropped into `docs/screenshots/` with the right name is
+already at the path it would be linked from.
+
+| File | Route | Sign in as |
 |---|---|---|
-| <img src="docs/screenshots/user-dashboard.png" alt="User portal dashboard" width="100%" /> <br> **User portal** — 9 destinations | <img src="docs/screenshots/officer-queue.png" alt="Officer work queue" width="100%" /> <br> **Officer portal** — underwriting & sanction | <img src="docs/screenshots/admin-users.png" alt="Admin user management" width="100%" /> <br> **Admin portal** — users, products, audit |
-```
+| `admin-dashboard.png` | `/admin/dashboard` | `admin@demo.in` |
+| `admin-products.png` | `/admin/products` | `admin@demo.in` |
+| `admin-staff.png` | `/admin/staff` | `admin@demo.in` |
+| `admin-reports.png` | `/admin/reports` | `admin@demo.in` |
+| `admin-audit-log.png` | `/admin/audit` | `admin@demo.in` |
+| `officer-applications.png` | `/employee/applications` | `officer@demo.in` |
+| `officer-scorecard.png` | `/employee/applications/20000000-0000-4000-8000-000000000002` | `officer@demo.in` |
+| `officer-decision.png` | `/employee/applications/20000000-0000-4000-8000-000000000002` | `officer@demo.in` |
+| `officer-loans.png` | `/employee/loans` | `officer@demo.in` |
+| `officer-noc.png` | `/employee/noc` | `officer@demo.in` |
+| `officer-tickets.png` | `/employee/tickets` | `officer@demo.in` |
+| `officer-chats.png` | `/employee/chat` | `officer@demo.in` |
+| `user-new-loan.png` | `/user/new-loan` | `rahul@demo.in` |
+| `user-document-wizard.png` | `/user/new-loan/10000000-0000-4000-8000-000000000001` | `rahul@demo.in` |
+| `user-applications.png` | `/user/applications` | `rahul@demo.in` |
+| `user-application-detail.png` | `/user/applications/20000000-0000-4000-8000-000000000001` | `rahul@demo.in` |
+| `user-resubmission.png` | `/user/applications/20000000-0000-4000-8000-000000000003` | `priya@demo.in` |
+| `user-loan-detail.png` | `/user/loans/40000000-0000-4000-8000-000000000001` | `rahul@demo.in` |
+| `user-emi-calculator.png` | `/user/emi-calculator` | `rahul@demo.in` |
+| `user-cibil.png` | `/user/cibil` | `rahul@demo.in` |
+| `user-payments.png` | `/user/payments` | `rahul@demo.in` |
+| `user-tickets.png` | `/user/tickets` | `rahul@demo.in` |
+| `landing.png` · `login.png` · `signup.png` | `/` · `/login` · `/signup` | — |
 
-### Gallery
+Two things that keep the repository small:
 
-```html
-<details>
-<summary><b>User portal</b></summary>
+- **Export WebP, not PNG.** Typically 60–75% smaller for screenshots and GitHub renders
+  it. A full-page capture drops from ~1 MB to ~250 KB with no visible difference.
+- **Capture at 1×.** The README column is ~800px wide; a 2× image is paying four times
+  for detail nobody sees.
 
-![Dashboard](docs/screenshots/user-dashboard.png)
-![New loan](docs/screenshots/user-new-loan.png)
-![Document wizard](docs/screenshots/user-document-wizard.png)
-![Application detail](docs/screenshots/user-application-detail.png)
-![Resubmission](docs/screenshots/user-resubmission.png)
-![Loan detail](docs/screenshots/user-loan-detail.png)
-![EMI calculator](docs/screenshots/user-emi-calculator.png)
-![CIBIL score](docs/screenshots/user-cibil.png)
-![Payments](docs/screenshots/user-payments.png)
-
-</details>
-
-<details>
-<summary><b>Officer portal</b></summary>
-
-![Work queue](docs/screenshots/officer-queue.png)
-![Underwriting scorecard](docs/screenshots/officer-scorecard.png)
-![Decision panel](docs/screenshots/officer-decision.png)
-
-</details>
-
-<details>
-<summary><b>Admin portal</b></summary>
-
-![User management](docs/screenshots/admin-users.png)
-![Audit log](docs/screenshots/admin-audit-log.png)
-
-</details>
-
-<details>
-<summary><b>Chat (Realtime)</b></summary>
-
-![Live chat](docs/screenshots/chat.png)
-
-</details>
-```
-
-`<details>` keeps the README short while the pictures stay one click away — a good
-trade while the README still has fifteen feature sections.
-
-### Capture checklist
-
-| # | File | Where it earns its place |
-|---|---|---|
-| 1 | `hero-portals.png` | Under the badges — the fold |
-| 2 | `user-dashboard.png` | 3-column grid + gallery |
-| 3 | `officer-queue.png` | 3-column grid + gallery |
-| 4 | `admin-users.png` | 3-column grid + gallery |
-| 5 | `user-document-wizard.png` | Proves the data-driven checklist claim |
-| 6 | `officer-scorecard.png` | The FOIR `PASS/WARN/FAIL` panel |
-| 7 | `officer-decision.png` | Approve / reject / resubmit |
-| 8 | `user-loan-detail.png` | Amortisation + overdue |
-| 9 | `user-emi-calculator.png` | Where the maths is visible to a user |
-| 10 | `chat.png` | Realtime, least believable without proof |
-| 11 | `admin-audit-log.png` | Audit trail is an admin-portal claim |
-
-Optional: `user-resubmission.png`, `user-cibil.png`, `user-payments.png`,
-`user-new-loan.png`, `user-application-detail.png`.
-
-### Rules that keep this from rotting
-
-- **Full paths in every screenshot** — `/user/dashboard`, not `user/dashboard`. Next.js
-  route groups can render a `(user)` badge that the docs table above doesn't show; a
-  screenshot that contradicts the table reads as a bug.
-- **Blur or crop real PII before committing.** The `demo.in` seed accounts are fine;
-  any future screen pull is not.
-- **Export at 2× and compress.** Fifteen full-page PNGs at 2× is several MB of
-  scroll-jank for no added detail.
-- **Filename = the caption.** `user-dashboard.png` → "Dashboard". Keeps the gallery
-  alphabetical-but-meaningful and makes a rename a one-line edit.
-- **Don't inline them into the spec tables.** When a screenshot moves, only this
-  section breaks — not seven places in the document.
-
----
+There is no git-lfs configured, so every image committed stays in history permanently.
+Renaming or replacing one later keeps both copies forever, which is why this section
+shows six rather than two dozen.
 
 ## What's built, what's next
 
